@@ -15,6 +15,7 @@ from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
 LAYOUTS = ("cramped_room", "coordination_ring")
 HORIZON = 400
 SCENARIOS = 24
+# Both agents can add onions to a pot with room for more than one.
 EXCLUSIVE_TASKS = {
     "fetch_onion",
     "fetch_dish",
@@ -29,7 +30,7 @@ class Intent:
     task: str
     target: tuple[int, int] | None
 
-    def conflicts_with(self, other):
+    def conflicts_with(self, other: "Intent | None") -> bool:
         return (
             other is not None
             and self.target == other.target
@@ -55,27 +56,36 @@ class Controller:
         self.route = lru_cache(maxsize=8192)(self._route)
 
     def _route(self, position, facing, target, occupied, directions):
-        """Shortest route to an interaction, accounting for facing and floor tiles."""
+        """Return the number of steps and the first action needed to interact."""
         queue = deque([(position, facing, None, 0)])
         visited = {(position, facing)}
         while queue:
-            tile, orientation, first, distance = queue.popleft()
+            tile, orientation, first_action, distance = queue.popleft()
             if Action.move_in_direction(tile, orientation) == target:
-                return distance + 1, Action.INTERACT if first is None else first
+                return distance + 1, (
+                    Action.INTERACT if first_action is None else first_action
+                )
             for direction in directions:
                 destination = Action.move_in_direction(tile, direction)
                 if destination == occupied:
                     continue
+                # Stepping toward a counter changes facing without moving.
                 next_tile = destination if destination in self.floor else tile
-                node = (next_tile, direction)
-                if node not in visited:
-                    visited.add(node)
+                next_state = (next_tile, direction)
+                if next_state not in visited:
+                    visited.add(next_state)
                     queue.append(
-                        (*node, direction if first is None else first, distance + 1)
+                        (
+                            next_tile,
+                            direction,
+                            direction if first_action is None else first_action,
+                            distance + 1,
+                        )
                     )
         return None
 
     def candidates(self, state, player):
+        """List tasks based on what the player is carrying and which pots are open."""
         pots = self.mdp.get_pot_states(state)
         open_pots = pots["empty"] + pots["1_items"] + pots["2_items"]
         if not player.has_object():
@@ -105,8 +115,10 @@ class Controller:
             )
 
     def decide(self, state, index, directions, message=None, back_off=()):
+        """Choose an intended task and the action to take this tick."""
         player = state.players[index]
         teammate = state.players[1 - index]
+        # After a collision, one player tries to step aside before choosing a task.
         for direction in back_off:
             tile = Action.move_in_direction(player.position, direction)
             if tile in self.floor and tile != teammate.position:
@@ -114,12 +126,14 @@ class Controller:
 
         options = []
         for intent in self.candidates(state, player):
-            args = player.position, player.orientation, intent.target
-            route = self.route(*args, None, directions)
+            route = self.route(
+                player.position, player.orientation, intent.target, None, directions
+            )
             if route is None:
                 continue
             distance, action = route
             if intent.conflicts_with(message):
+                # Give way if the sender can get there as quickly while avoiding us.
                 sender_route = self.route(
                     teammate.position,
                     teammate.orientation,
@@ -129,6 +143,7 @@ class Controller:
                 )
                 if sender_route is not None and sender_route[0] <= distance:
                     continue
+            # Walk to a cooking pot with a dish, then wait until the soup is ready.
             if (
                 intent.task == "plate_soup"
                 and action == Action.INTERACT
@@ -138,11 +153,13 @@ class Controller:
             options.append((distance, intent, action))
 
         if options:
+            # Equal distances keep the order from candidates().
             _, intent, action = min(options, key=lambda option: option[0])
             return intent, action
         return None, Action.STAY
 
     def attempted_position(self, player, action):
+        """Return the destination before the simulator resolves player collisions."""
         if action == Action.INTERACT:
             return player.position
         tile = Action.move_in_direction(player.position, action)
@@ -162,39 +179,42 @@ def run_episode(controller, seed, always_send):
     trace = None
     collision = False
     for tick in range(HORIZON):
+        # Alternate who chooses first. Both actions still happen together.
         sender = (seed + tick) % 2
         receiver = 1 - sender
         # Draw on every tick so paired scenarios share recovery randomness.
-        yield_player = rng.randrange(2)
+        recovery_player = rng.randrange(2)
         back_off_directions = rng.sample(list(Direction.ALL_DIRECTIONS), 4)
-        back_off_player = yield_player if collision else None
-        intent, send_action = controller.decide(
+        back_off_player = recovery_player if collision else None
+        receiver_back_off = back_off_directions if receiver == back_off_player else ()
+        sender_intent, sender_action = controller.decide(
             state,
             sender,
             directions[sender],
             back_off=back_off_directions if sender == back_off_player else (),
         )
-        message = (intent or Intent("idle", None)) if always_send else None
-        receive_intent, receive_action = controller.decide(
+        message = (sender_intent or Intent("idle", None)) if always_send else None
+        receiver_intent, receiver_action = controller.decide(
             state,
             receiver,
             directions[receiver],
-            message,
-            back_off=back_off_directions if receiver == back_off_player else (),
+            message=message,
+            back_off=receiver_back_off,
         )
         metrics.messages_sent += message is not None
-        metrics.duplicate_commitments += intent is not None and intent.conflicts_with(
-            receive_intent
+        metrics.duplicate_commitments += (
+            sender_intent is not None and sender_intent.conflicts_with(receiver_intent)
         )
 
+        # Capture the first action that changes when the same receiver sees a message.
         if message is not None and trace is None:
             silent_intent, silent_action = controller.decide(
                 state,
                 receiver,
                 directions[receiver],
-                back_off=back_off_directions if receiver == back_off_player else (),
+                back_off=receiver_back_off,
             )
-            if silent_action != receive_action:
+            if silent_action != receiver_action:
                 trace = {
                     "seed": seed,
                     "tick": tick,
@@ -209,21 +229,23 @@ def run_episode(controller, seed, always_send):
                     if silent_intent is not None
                     else None,
                     "silent_receiver_action": silent_action,
-                    "messaged_receiver_intent": asdict(receive_intent)
-                    if receive_intent is not None
+                    "messaged_receiver_intent": asdict(receiver_intent)
+                    if receiver_intent is not None
                     else None,
-                    "messaged_receiver_action": receive_action,
+                    "messaged_receiver_action": receiver_action,
                 }
 
         actions = [None, None]
-        actions[sender], actions[receiver] = send_action, receive_action
+        actions[sender], actions[receiver] = sender_action, receiver_action
         old_positions = tuple(player.position for player in state.players)
         attempted = tuple(
-            controller.attempted_position(p, a) for p, a in zip(state.players, actions)
+            controller.attempted_position(player, action)
+            for player, action in zip(state.players, actions)
         )
         next_state, info = controller.mdp.get_state_transition(state, tuple(actions))
         collision = controller.mdp.is_transition_collision(old_positions, attempted)
         if collision:
+            # Count floor moves canceled by the collision.
             metrics.blocked_moves += sum(
                 old != proposed and new.position == old
                 for old, proposed, new in zip(
@@ -243,6 +265,7 @@ def run_pilot():
         episodes = []
         trace = None
         for seed in range(SCENARIOS):
+            # Each seed pairs the two conditions on the same starting setup.
             silent, _ = run_episode(controller, seed, always_send=False)
             always_send, episode_trace = run_episode(controller, seed, always_send=True)
             episodes.append(
