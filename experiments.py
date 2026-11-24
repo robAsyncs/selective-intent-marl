@@ -65,12 +65,24 @@ def evaluate(controller, seeds, make_policy, repeats=1):
 
 
 def compare_rewards(policy, reference, message_cost=0):
-    """Bootstrap paired scenario differences in communication-adjusted reward."""
-    deltas = [
-        (trial["team_return"] - baseline["team_return"])
-        - message_cost * (trial["messages_sent"] - baseline["messages_sent"])
-        for trial, baseline in zip(policy["episodes"], reference["episodes"], strict=True)
-    ]
+    """Bootstrap communication-adjusted reward differences paired by seed."""
+    policy_episodes = policy["episodes"]
+    reference_episodes = reference["episodes"]
+    policy_by_seed = {episode["seed"]: episode for episode in policy_episodes}
+    reference_by_seed = {episode["seed"]: episode for episode in reference_episodes}
+    if len(policy_by_seed) != len(policy_episodes) or len(reference_by_seed) != len(
+        reference_episodes
+    ):
+        raise ValueError("Reward comparisons require one episode per seed per condition")
+    if not policy_by_seed or policy_by_seed.keys() != reference_by_seed.keys():
+        raise ValueError("Reward comparisons require the same nonempty set of seeds")
+
+    deltas = []
+    for seed in sorted(policy_by_seed):
+        trial, baseline = policy_by_seed[seed], reference_by_seed[seed]
+        reward_delta = trial["team_return"] - baseline["team_return"]
+        message_delta = trial["messages_sent"] - baseline["messages_sent"]
+        deltas.append(reward_delta - message_cost * message_delta)
     rng = Random(0)
     resamples = sorted(mean(rng.choices(deltas, k=len(deltas))) for _ in range(2000))
     return {
