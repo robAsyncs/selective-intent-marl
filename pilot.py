@@ -219,7 +219,8 @@ def conflict_rule(controller, state, sender, intent):
     return competition_distances(controller, state, sender, intent) is not None
 
 
-def run_episode(controller, seed, send_policy: SendPolicy):
+def run_episode(controller, seed, send_policy: SendPolicy, *, capture_trace: bool = False):
+    """Run an episode and optionally record the first action changed by a message."""
     rng = Random(seed)
     directions = tuple(
         tuple(rng.sample(list(Direction.ALL_DIRECTIONS), 4)) for _ in range(2)
@@ -260,8 +261,7 @@ def run_episode(controller, seed, send_policy: SendPolicy):
             sender_intent is not None and sender_intent.conflicts_with(receiver_intent)
         )
 
-        # Capture the first action that changes when the same receiver sees a message.
-        if message is not None and trace is None:
+        if capture_trace and message is not None and trace is None:
             silent_intent, silent_action = controller.decide(
                 state,
                 receiver,
@@ -321,7 +321,9 @@ def run_pilot():
         for seed in range(SCENARIOS):
             # Each seed pairs the two conditions on the same starting setup.
             silent_metrics, _ = run_episode(controller, seed, silent)
-            send_metrics, episode_trace = run_episode(controller, seed, always_send)
+            send_metrics, episode_trace = run_episode(
+                controller, seed, always_send, capture_trace=trace is None
+            )
             episodes.append(
                 {
                     "seed": seed,
