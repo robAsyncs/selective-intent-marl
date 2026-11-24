@@ -45,10 +45,29 @@ with and without a message. On Cramped Room, the receiver waits after
 learning that its partner is heading to start the soup. On Coordination Ring,
 the receiver turns toward a different onion dispenser.
 
-These results give us a reason to test selective sending. The pilot used one
-scripted controller on two maps and charged nothing for messages. The next
-experiment can test whether a learned gate keeps most of the reward with fewer
-messages and beats a random gate that sends about as often.
+## Conflict-based sending
+
+After choosing its task, the sender checks if the teammate could use the same
+exclusive target given the visible kitchen state and what the teammate holds.
+For example, two agents carrying onions can compete for the last slot in a
+pot. The sender sends only if it has a route around the teammate and can reach
+the target at least as quickly. The receiver chooses its intention and action
+after this decision.
+
+We evaluated the rule on the original 24 paired seeds per layout. The random
+policy makes an independent send decision each tick. We calibrated its rate
+on seeds 100–123 per layout and averaged eight random runs per evaluation seed.
+
+| Layout | Rule reward | Rule messages | Random reward | Random messages | Paired reward gain (95% interval) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Cramped Room | 205.00 | 43.58 | 200.52 | 47.08 | +4.48 (−0.21 to +9.69) |
+| Coordination Ring | 154.17 | 30.50 | 139.27 | 27.04 | +14.90 (+5.10 to +25.31) |
+
+The rule matched always-send reward on every paired seed. It used 89.1% fewer
+messages on Cramped Room and 92.4% fewer on Coordination Ring. The paired
+bootstrap interval for Cramped Room includes zero. The interval for Coordination
+Ring favors the rule. See [heuristic-results.json](heuristic-results.json) for
+per-seed metrics and the calibration rates.
 
 ## Run it locally
 
@@ -60,6 +79,8 @@ uv venv --python 3.12
 uv pip install -r requirements.txt
 .venv/bin/python pilot.py --output /tmp/overcooked-pilot.json
 cmp pilot-results.json /tmp/overcooked-pilot.json
+.venv/bin/python experiments.py heuristic --output /tmp/overcooked-heuristic.json
+cmp heuristic-results.json /tmp/overcooked-heuristic.json
 ```
 
 [`pilot-results.json`](pilot-results.json) contains both conditions' metrics

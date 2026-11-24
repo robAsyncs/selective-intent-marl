@@ -180,6 +180,45 @@ def always_send(controller, state, sender, intent):
     return True
 
 
+def competition_distances(
+    controller: Controller,
+    state: OvercookedState,
+    sender: int,
+    intent: Intent | None,
+) -> tuple[int, int] | None:
+    """Find a reachable exclusive target the teammate could also use."""
+    if intent is None or intent.task not in EXCLUSIVE_TASKS:
+        return None
+
+    player, teammate = state.players[sender], state.players[1 - sender]
+    # Candidate eligibility depends on visible held objects and the kitchen.
+    # The teammate's task choice and route tie-breaking are private.
+    if not any(
+        intent.conflicts_with(task) for task in controller.candidates(state, teammate)
+    ):
+        return None
+
+    # A fixed direction order suffices because only shortest distances matter.
+    directions = tuple(Direction.ALL_DIRECTIONS)
+    sender_route = controller.route(
+        player.position, player.orientation, intent.target, teammate.position, directions
+    )
+    teammate_route = controller.route(
+        teammate.position, teammate.orientation, intent.target, None, directions
+    )
+    if (
+        sender_route is None
+        or teammate_route is None
+        or sender_route[0] > teammate_route[0]
+    ):
+        return None
+    return sender_route[0], teammate_route[0]
+
+
+def conflict_rule(controller, state, sender, intent):
+    return competition_distances(controller, state, sender, intent) is not None
+
+
 def run_episode(controller, seed, send_policy: SendPolicy):
     rng = Random(seed)
     directions = tuple(
