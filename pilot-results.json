@@ -1,0 +1,1131 @@
+{
+  "horizon": 400,
+  "scenario_count": 24,
+  "layouts": {
+    "cramped_room": {
+      "means": {
+        "silent": {
+          "team_return": 199.16666666666666,
+          "completed_orders": 9.958333333333334,
+          "messages_sent": 0,
+          "blocked_moves": 80.04166666666667,
+          "duplicate_commitments": 47.333333333333336
+        },
+        "always_send": {
+          "team_return": 205,
+          "completed_orders": 10.25,
+          "messages_sent": 400,
+          "blocked_moves": 68.375,
+          "duplicate_commitments": 31.333333333333332
+        }
+      },
+      "trace": {
+        "seed": 0,
+        "tick": 11,
+        "back_off_player": null,
+        "back_off_directions": [],
+        "receiver_directions": [
+          [
+            -1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            -1
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "sender": 1,
+        "receiver": 0,
+        "state": {
+          "players": [
+            {
+              "position": [
+                3,
+                2
+              ],
+              "orientation": [
+                1,
+                0
+              ],
+              "held_object": null
+            },
+            {
+              "position": [
+                2,
+                1
+              ],
+              "orientation": [
+                0,
+                -1
+              ],
+              "held_object": null
+            }
+          ],
+          "objects": [
+            {
+              "name": "soup",
+              "position": [
+                2,
+                0
+              ],
+              "_ingredients": [
+                {
+                  "name": "onion",
+                  "position": [
+                    2,
+                    0
+                  ]
+                },
+                {
+                  "name": "onion",
+                  "position": [
+                    2,
+                    0
+                  ]
+                },
+                {
+                  "name": "onion",
+                  "position": [
+                    2,
+                    0
+                  ]
+                }
+              ],
+              "cooking_tick": -1,
+              "is_cooking": false,
+              "is_ready": false,
+              "is_idle": true,
+              "cook_time": -1,
+              "_cooking_tick": -1
+            }
+          ],
+          "bonus_orders": [],
+          "all_orders": [
+            {
+              "ingredients": [
+                "onion",
+                "onion",
+                "onion"
+              ]
+            }
+          ],
+          "timestep": 11
+        },
+        "message": {
+          "task": "start_soup",
+          "target": [
+            2,
+            0
+          ]
+        },
+        "silent_receiver_intent": {
+          "task": "start_soup",
+          "target": [
+            2,
+            0
+          ]
+        },
+        "silent_receiver_action": [
+          -1,
+          0
+        ],
+        "messaged_receiver_intent": null,
+        "messaged_receiver_action": [
+          0,
+          0
+        ]
+      },
+      "episodes": [
+        {
+          "seed": 0,
+          "silent": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 0,
+            "blocked_moves": 73,
+            "duplicate_commitments": 103
+          },
+          "always_send": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 400,
+            "blocked_moves": 55,
+            "duplicate_commitments": 67
+          }
+        },
+        {
+          "seed": 1,
+          "silent": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 0,
+            "blocked_moves": 87,
+            "duplicate_commitments": 37
+          },
+          "always_send": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 400,
+            "blocked_moves": 56,
+            "duplicate_commitments": 64
+          }
+        },
+        {
+          "seed": 2,
+          "silent": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 0,
+            "blocked_moves": 76,
+            "duplicate_commitments": 111
+          },
+          "always_send": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 400,
+            "blocked_moves": 52,
+            "duplicate_commitments": 75
+          }
+        },
+        {
+          "seed": 3,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 80,
+            "duplicate_commitments": 21
+          },
+          "always_send": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 400,
+            "blocked_moves": 70,
+            "duplicate_commitments": 12
+          }
+        },
+        {
+          "seed": 4,
+          "silent": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 0,
+            "blocked_moves": 54,
+            "duplicate_commitments": 23
+          },
+          "always_send": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 400,
+            "blocked_moves": 75,
+            "duplicate_commitments": 11
+          }
+        },
+        {
+          "seed": 5,
+          "silent": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 0,
+            "blocked_moves": 97,
+            "duplicate_commitments": 20
+          },
+          "always_send": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 400,
+            "blocked_moves": 79,
+            "duplicate_commitments": 8
+          }
+        },
+        {
+          "seed": 6,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 76,
+            "duplicate_commitments": 16
+          },
+          "always_send": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 400,
+            "blocked_moves": 84,
+            "duplicate_commitments": 10
+          }
+        },
+        {
+          "seed": 7,
+          "silent": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 0,
+            "blocked_moves": 69,
+            "duplicate_commitments": 16
+          },
+          "always_send": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 400,
+            "blocked_moves": 65,
+            "duplicate_commitments": 8
+          }
+        },
+        {
+          "seed": 8,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 78,
+            "duplicate_commitments": 56
+          },
+          "always_send": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 400,
+            "blocked_moves": 70,
+            "duplicate_commitments": 39
+          }
+        },
+        {
+          "seed": 9,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 83,
+            "duplicate_commitments": 18
+          },
+          "always_send": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 400,
+            "blocked_moves": 67,
+            "duplicate_commitments": 4
+          }
+        },
+        {
+          "seed": 10,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 87,
+            "duplicate_commitments": 26
+          },
+          "always_send": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 400,
+            "blocked_moves": 68,
+            "duplicate_commitments": 42
+          }
+        },
+        {
+          "seed": 11,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 91,
+            "duplicate_commitments": 17
+          },
+          "always_send": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 400,
+            "blocked_moves": 89,
+            "duplicate_commitments": 8
+          }
+        },
+        {
+          "seed": 12,
+          "silent": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 0,
+            "blocked_moves": 82,
+            "duplicate_commitments": 103
+          },
+          "always_send": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 400,
+            "blocked_moves": 67,
+            "duplicate_commitments": 66
+          }
+        },
+        {
+          "seed": 13,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 63,
+            "duplicate_commitments": 50
+          },
+          "always_send": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 400,
+            "blocked_moves": 56,
+            "duplicate_commitments": 64
+          }
+        },
+        {
+          "seed": 14,
+          "silent": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 0,
+            "blocked_moves": 79,
+            "duplicate_commitments": 18
+          },
+          "always_send": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 400,
+            "blocked_moves": 70,
+            "duplicate_commitments": 18
+          }
+        },
+        {
+          "seed": 15,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 73,
+            "duplicate_commitments": 39
+          },
+          "always_send": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 400,
+            "blocked_moves": 75,
+            "duplicate_commitments": 9
+          }
+        },
+        {
+          "seed": 16,
+          "silent": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 0,
+            "blocked_moves": 86,
+            "duplicate_commitments": 69
+          },
+          "always_send": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 400,
+            "blocked_moves": 61,
+            "duplicate_commitments": 61
+          }
+        },
+        {
+          "seed": 17,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 99,
+            "duplicate_commitments": 25
+          },
+          "always_send": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 400,
+            "blocked_moves": 71,
+            "duplicate_commitments": 12
+          }
+        },
+        {
+          "seed": 18,
+          "silent": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 0,
+            "blocked_moves": 79,
+            "duplicate_commitments": 101
+          },
+          "always_send": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 400,
+            "blocked_moves": 61,
+            "duplicate_commitments": 70
+          }
+        },
+        {
+          "seed": 19,
+          "silent": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 0,
+            "blocked_moves": 84,
+            "duplicate_commitments": 84
+          },
+          "always_send": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 400,
+            "blocked_moves": 74,
+            "duplicate_commitments": 8
+          }
+        },
+        {
+          "seed": 20,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 82,
+            "duplicate_commitments": 69
+          },
+          "always_send": {
+            "team_return": 220,
+            "completed_orders": 11,
+            "messages_sent": 400,
+            "blocked_moves": 72,
+            "duplicate_commitments": 12
+          }
+        },
+        {
+          "seed": 21,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 67,
+            "duplicate_commitments": 18
+          },
+          "always_send": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 400,
+            "blocked_moves": 76,
+            "duplicate_commitments": 37
+          }
+        },
+        {
+          "seed": 22,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 106,
+            "duplicate_commitments": 23
+          },
+          "always_send": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 400,
+            "blocked_moves": 61,
+            "duplicate_commitments": 35
+          }
+        },
+        {
+          "seed": 23,
+          "silent": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 70,
+            "duplicate_commitments": 73
+          },
+          "always_send": {
+            "team_return": 240,
+            "completed_orders": 12,
+            "messages_sent": 400,
+            "blocked_moves": 67,
+            "duplicate_commitments": 12
+          }
+        }
+      ]
+    },
+    "coordination_ring": {
+      "means": {
+        "silent": {
+          "team_return": 139.16666666666666,
+          "completed_orders": 6.958333333333333,
+          "messages_sent": 0,
+          "blocked_moves": 197.75,
+          "duplicate_commitments": 25.333333333333332
+        },
+        "always_send": {
+          "team_return": 154.16666666666666,
+          "completed_orders": 7.708333333333333,
+          "messages_sent": 400,
+          "blocked_moves": 185.625,
+          "duplicate_commitments": 12.041666666666666
+        }
+      },
+      "trace": {
+        "seed": 0,
+        "tick": 20,
+        "back_off_player": null,
+        "back_off_directions": [],
+        "receiver_directions": [
+          [
+            -1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            -1
+          ]
+        ],
+        "sender": 0,
+        "receiver": 1,
+        "state": {
+          "players": [
+            {
+              "position": [
+                3,
+                3
+              ],
+              "orientation": [
+                0,
+                1
+              ],
+              "held_object": null
+            },
+            {
+              "position": [
+                3,
+                1
+              ],
+              "orientation": [
+                1,
+                0
+              ],
+              "held_object": null
+            }
+          ],
+          "objects": [
+            {
+              "name": "soup",
+              "position": [
+                3,
+                0
+              ],
+              "_ingredients": [
+                {
+                  "name": "onion",
+                  "position": [
+                    3,
+                    0
+                  ]
+                }
+              ],
+              "cooking_tick": -1,
+              "is_cooking": false,
+              "is_ready": false,
+              "is_idle": true,
+              "cook_time": -1,
+              "_cooking_tick": -1
+            },
+            {
+              "name": "soup",
+              "position": [
+                4,
+                1
+              ],
+              "_ingredients": [
+                {
+                  "name": "onion",
+                  "position": [
+                    4,
+                    1
+                  ]
+                },
+                {
+                  "name": "onion",
+                  "position": [
+                    4,
+                    1
+                  ]
+                }
+              ],
+              "cooking_tick": -1,
+              "is_cooking": false,
+              "is_ready": false,
+              "is_idle": true,
+              "cook_time": -1,
+              "_cooking_tick": -1
+            }
+          ],
+          "bonus_orders": [],
+          "all_orders": [
+            {
+              "ingredients": [
+                "onion",
+                "onion",
+                "onion"
+              ]
+            }
+          ],
+          "timestep": 20
+        },
+        "message": {
+          "task": "fetch_onion",
+          "target": [
+            0,
+            3
+          ]
+        },
+        "silent_receiver_intent": {
+          "task": "fetch_onion",
+          "target": [
+            0,
+            3
+          ]
+        },
+        "silent_receiver_action": [
+          0,
+          1
+        ],
+        "messaged_receiver_intent": {
+          "task": "fetch_onion",
+          "target": [
+            1,
+            4
+          ]
+        },
+        "messaged_receiver_action": [
+          -1,
+          0
+        ]
+      },
+      "episodes": [
+        {
+          "seed": 0,
+          "silent": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 0,
+            "blocked_moves": 188,
+            "duplicate_commitments": 26
+          },
+          "always_send": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 400,
+            "blocked_moves": 108,
+            "duplicate_commitments": 22
+          }
+        },
+        {
+          "seed": 1,
+          "silent": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 0,
+            "blocked_moves": 266,
+            "duplicate_commitments": 22
+          },
+          "always_send": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 400,
+            "blocked_moves": 180,
+            "duplicate_commitments": 18
+          }
+        },
+        {
+          "seed": 2,
+          "silent": {
+            "team_return": 120,
+            "completed_orders": 6,
+            "messages_sent": 0,
+            "blocked_moves": 179,
+            "duplicate_commitments": 27
+          },
+          "always_send": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 400,
+            "blocked_moves": 167,
+            "duplicate_commitments": 15
+          }
+        },
+        {
+          "seed": 3,
+          "silent": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 0,
+            "blocked_moves": 256,
+            "duplicate_commitments": 22
+          },
+          "always_send": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 400,
+            "blocked_moves": 193,
+            "duplicate_commitments": 10
+          }
+        },
+        {
+          "seed": 4,
+          "silent": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 0,
+            "blocked_moves": 178,
+            "duplicate_commitments": 36
+          },
+          "always_send": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 400,
+            "blocked_moves": 204,
+            "duplicate_commitments": 8
+          }
+        },
+        {
+          "seed": 5,
+          "silent": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 0,
+            "blocked_moves": 230,
+            "duplicate_commitments": 16
+          },
+          "always_send": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 400,
+            "blocked_moves": 191,
+            "duplicate_commitments": 7
+          }
+        },
+        {
+          "seed": 6,
+          "silent": {
+            "team_return": 120,
+            "completed_orders": 6,
+            "messages_sent": 0,
+            "blocked_moves": 185,
+            "duplicate_commitments": 27
+          },
+          "always_send": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 400,
+            "blocked_moves": 209,
+            "duplicate_commitments": 9
+          }
+        },
+        {
+          "seed": 7,
+          "silent": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 0,
+            "blocked_moves": 162,
+            "duplicate_commitments": 40
+          },
+          "always_send": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 400,
+            "blocked_moves": 211,
+            "duplicate_commitments": 7
+          }
+        },
+        {
+          "seed": 8,
+          "silent": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 0,
+            "blocked_moves": 198,
+            "duplicate_commitments": 15
+          },
+          "always_send": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 400,
+            "blocked_moves": 238,
+            "duplicate_commitments": 6
+          }
+        },
+        {
+          "seed": 9,
+          "silent": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 0,
+            "blocked_moves": 170,
+            "duplicate_commitments": 24
+          },
+          "always_send": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 400,
+            "blocked_moves": 132,
+            "duplicate_commitments": 10
+          }
+        },
+        {
+          "seed": 10,
+          "silent": {
+            "team_return": 120,
+            "completed_orders": 6,
+            "messages_sent": 0,
+            "blocked_moves": 130,
+            "duplicate_commitments": 32
+          },
+          "always_send": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 400,
+            "blocked_moves": 129,
+            "duplicate_commitments": 25
+          }
+        },
+        {
+          "seed": 11,
+          "silent": {
+            "team_return": 120,
+            "completed_orders": 6,
+            "messages_sent": 0,
+            "blocked_moves": 146,
+            "duplicate_commitments": 25
+          },
+          "always_send": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 400,
+            "blocked_moves": 202,
+            "duplicate_commitments": 6
+          }
+        },
+        {
+          "seed": 12,
+          "silent": {
+            "team_return": 100,
+            "completed_orders": 5,
+            "messages_sent": 0,
+            "blocked_moves": 214,
+            "duplicate_commitments": 21
+          },
+          "always_send": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 400,
+            "blocked_moves": 211,
+            "duplicate_commitments": 9
+          }
+        },
+        {
+          "seed": 13,
+          "silent": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 0,
+            "blocked_moves": 173,
+            "duplicate_commitments": 28
+          },
+          "always_send": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 400,
+            "blocked_moves": 193,
+            "duplicate_commitments": 9
+          }
+        },
+        {
+          "seed": 14,
+          "silent": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 0,
+            "blocked_moves": 171,
+            "duplicate_commitments": 35
+          },
+          "always_send": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 400,
+            "blocked_moves": 227,
+            "duplicate_commitments": 10
+          }
+        },
+        {
+          "seed": 15,
+          "silent": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 0,
+            "blocked_moves": 202,
+            "duplicate_commitments": 31
+          },
+          "always_send": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 400,
+            "blocked_moves": 220,
+            "duplicate_commitments": 17
+          }
+        },
+        {
+          "seed": 16,
+          "silent": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 0,
+            "blocked_moves": 178,
+            "duplicate_commitments": 30
+          },
+          "always_send": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 400,
+            "blocked_moves": 189,
+            "duplicate_commitments": 4
+          }
+        },
+        {
+          "seed": 17,
+          "silent": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 0,
+            "blocked_moves": 239,
+            "duplicate_commitments": 18
+          },
+          "always_send": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 400,
+            "blocked_moves": 157,
+            "duplicate_commitments": 16
+          }
+        },
+        {
+          "seed": 18,
+          "silent": {
+            "team_return": 180,
+            "completed_orders": 9,
+            "messages_sent": 0,
+            "blocked_moves": 162,
+            "duplicate_commitments": 25
+          },
+          "always_send": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 400,
+            "blocked_moves": 173,
+            "duplicate_commitments": 11
+          }
+        },
+        {
+          "seed": 19,
+          "silent": {
+            "team_return": 120,
+            "completed_orders": 6,
+            "messages_sent": 0,
+            "blocked_moves": 273,
+            "duplicate_commitments": 17
+          },
+          "always_send": {
+            "team_return": 120,
+            "completed_orders": 6,
+            "messages_sent": 400,
+            "blocked_moves": 199,
+            "duplicate_commitments": 11
+          }
+        },
+        {
+          "seed": 20,
+          "silent": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 0,
+            "blocked_moves": 227,
+            "duplicate_commitments": 29
+          },
+          "always_send": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 400,
+            "blocked_moves": 180,
+            "duplicate_commitments": 11
+          }
+        },
+        {
+          "seed": 21,
+          "silent": {
+            "team_return": 120,
+            "completed_orders": 6,
+            "messages_sent": 0,
+            "blocked_moves": 259,
+            "duplicate_commitments": 17
+          },
+          "always_send": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 400,
+            "blocked_moves": 202,
+            "duplicate_commitments": 10
+          }
+        },
+        {
+          "seed": 22,
+          "silent": {
+            "team_return": 160,
+            "completed_orders": 8,
+            "messages_sent": 0,
+            "blocked_moves": 185,
+            "duplicate_commitments": 26
+          },
+          "always_send": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 400,
+            "blocked_moves": 220,
+            "duplicate_commitments": 13
+          }
+        },
+        {
+          "seed": 23,
+          "silent": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 0,
+            "blocked_moves": 175,
+            "duplicate_commitments": 19
+          },
+          "always_send": {
+            "team_return": 120,
+            "completed_orders": 6,
+            "messages_sent": 400,
+            "blocked_moves": 120,
+            "duplicate_commitments": 25
+          }
+        }
+      ]
+    }
+  }
+}
