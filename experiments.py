@@ -3,12 +3,21 @@
 import argparse
 import json
 from dataclasses import asdict
+from math import isfinite
 from pathlib import Path
 from random import Random
 from statistics import mean
 
 from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
 
+from learned import (
+    DEFAULT_COSTS,
+    PRIOR_WEIGHT,
+    PROBES_PER_EPISODE,
+    ROLLOUT_RATES,
+    TRAINING_SEEDS,
+    fit_send_values,
+)
 from pilot import (
     HORIZON,
     LAYOUTS,
@@ -22,6 +31,7 @@ from pilot import (
 
 CALIBRATION_SEEDS = range(100, 124)
 RANDOM_REPEATS = 8
+HELD_OUT_SEEDS = range(2000, 2048)
 
 
 def random_policy(rate, seed, repeat):
@@ -85,6 +95,11 @@ def evaluate_baselines(controller, seeds, calibration_seeds=CALIBRATION_SEEDS):
     }
 
 
+def adjusted_return(condition, cost):
+    means = condition["means"]
+    return means["team_return"] - cost * means["messages_sent"]
+
+
 def run_heuristic():
     results = {
         "horizon": HORIZON,
@@ -109,12 +124,82 @@ def run_heuristic():
     return results
 
 
+def run_learned(costs=DEFAULT_COSTS):
+    results = {
+        "horizon": HORIZON,
+        "training_seeds": list(TRAINING_SEEDS),
+        "calibration_seeds": list(CALIBRATION_SEEDS),
+        "evaluation_seeds": list(HELD_OUT_SEEDS),
+        "probes_per_training_episode": PROBES_PER_EPISODE,
+        "training_rollout_rates": ROLLOUT_RATES,
+        "prior_weight": PRIOR_WEIGHT,
+        "random_repeats_per_seed": RANDOM_REPEATS,
+        "layouts": {},
+    }
+    for layout in LAYOUTS:
+        controller = Controller(OvercookedGridworld.from_layout_name(layout))
+        values = fit_send_values(controller)
+        baseline_rate, baselines = evaluate_baselines(controller, HELD_OUT_SEEDS)
+        sweep = []
+        for cost in costs:
+            policy = values.policy(cost)
+            calibration = evaluate(controller, CALIBRATION_SEEDS, lambda *_: policy)
+            rate = calibration["means"]["messages_sent"] / HORIZON
+            learned = evaluate(controller, HELD_OUT_SEEDS, lambda *_: policy)
+            random_matched = evaluate(
+                controller,
+                HELD_OUT_SEEDS,
+                lambda seed, repeat: random_policy(rate, seed, repeat),
+                repeats=RANDOM_REPEATS,
+            )
+            conditions = {
+                **baselines,
+                "learned": learned,
+                "random_matched_to_learned": random_matched,
+            }
+            sweep.append(
+                {
+                    "message_cost": cost,
+                    "calibrated_random_rate": rate,
+                    "learned": learned,
+                    "random_matched_to_learned": random_matched,
+                    "mean_adjusted_return": {
+                        name: adjusted_return(condition, cost)
+                        for name, condition in conditions.items()
+                    },
+                    "learned_vs_random_adjusted_return": compare_rewards(
+                        learned, random_matched, cost
+                    ),
+                }
+            )
+        results["layouts"][layout] = {
+            "training_probes": sum(totals.samples for totals in values.by_task.values()),
+            "conflict_rule_random_rate": baseline_rate,
+            "baselines": baselines,
+            "cost_sweep": sweep,
+        }
+    return results
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("experiment", choices=("heuristic",))
+    parser.add_argument("experiment", choices=("heuristic", "learned"))
     parser.add_argument("--output", type=Path, help="Write JSON to this file.")
+    parser.add_argument(
+        "--costs", type=float, nargs="+", help="Message costs for the learned sweep."
+    )
     args = parser.parse_args()
-    output = json.dumps(run_heuristic(), indent=2) + "\n"
+    if args.costs is not None and (
+        args.experiment != "learned"
+        or any(not isfinite(cost) or cost < 0 for cost in args.costs)
+    ):
+        parser.error("--costs requires the learned experiment and finite nonnegative values")
+    results = (
+        run_heuristic()
+        if args.experiment == "heuristic"
+        else run_learned(DEFAULT_COSTS if args.costs is None else args.costs)
+    )
+    output = json.dumps(results, indent=2) + "\n"
     if args.output:
         args.output.write_text(output, encoding="utf-8")
     else:

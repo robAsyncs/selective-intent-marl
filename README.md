@@ -69,6 +69,45 @@ bootstrap interval for Cramped Room includes zero. The interval for Coordination
 Ring favors the rule. See [heuristic-results.json](heuristic-results.json) for
 per-seed metrics and the calibration rates.
 
+## Learned sending
+
+The learned policy uses the same send decision as the other policies. At a
+potential conflict, its inputs are the sender's task, its distance to the
+target, and how many steps sooner it can get there than the teammate.
+
+During training, we replay a sampled decision with both choices, send and
+stay silent, and measure the difference in team reward and message count
+through the end of the episode. The paired rollouts share the simulator seed
+and subsequent random draws. The model averages these differences for
+similar decisions and sends when the estimated gain in team reward minus
+the cost of extra messages is positive. The same rollout data is used to fit
+decisions at each cost.
+
+We trained separately on each layout using 512 seeds (1000–1511), with two
+decisions sampled per seed. We evaluated all costs and baselines on the same
+48 held-out seeds (2000–2047) per layout. Random sender rates were calibrated
+on seeds 100–123.
+
+| Layout | Cost per message | Reward | Messages | Adjusted reward |
+| --- | ---: | ---: | ---: | ---: |
+| Cramped Room | 0.00 | 202.92 | 32.02 | 202.92 |
+| Cramped Room | 0.10 | 202.50 | 16.67 | 200.83 |
+| Cramped Room | 0.25 | 201.67 | 5.10 | 200.39 |
+| Cramped Room | 0.50 | 202.92 | 4.77 | 200.53 |
+| Coordination Ring | 0.00 | 146.67 | 10.38 | 146.67 |
+| Coordination Ring | 0.10 | 146.67 | 9.15 | 145.75 |
+| Coordination Ring | 0.25 | 146.67 | 7.67 | 144.75 |
+| Coordination Ring | 0.50 | 147.92 | 5.81 | 145.01 |
+
+At a cost of 0.50 on Coordination Ring, the learned policy kept 98.1% of
+always-send reward and sent 5.81 messages per episode. It beat its
+rate-matched random baseline by 7.96 adjusted reward points (paired 95%
+interval from +0.77 to +14.57). The other three intervals on Coordination
+Ring include zero. On Cramped Room, silence scored higher than learned
+sending on mean adjusted reward at every tested cost. See
+[learned-results.json](learned-results.json) for all baseline comparisons and
+per-seed metrics.
+
 ## Run it locally
 
 Use Python 3.12 and [uv](https://docs.astral.sh/uv/). The simulator revision is
@@ -81,6 +120,8 @@ uv pip install -r requirements.txt
 cmp pilot-results.json /tmp/overcooked-pilot.json
 .venv/bin/python experiments.py heuristic --output /tmp/overcooked-heuristic.json
 cmp heuristic-results.json /tmp/overcooked-heuristic.json
+.venv/bin/python experiments.py learned --output /tmp/overcooked-learned.json
+cmp learned-results.json /tmp/overcooked-learned.json
 ```
 
 [`pilot-results.json`](pilot-results.json) contains both conditions' metrics
