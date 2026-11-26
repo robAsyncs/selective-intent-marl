@@ -65,6 +65,13 @@
             "blocked_moves": 80.04166666666667,
             "duplicate_commitments": 47.333333333333336
           },
+          "iqms": {
+            "team_return": 200,
+            "completed_orders": 10,
+            "messages_sent": 0,
+            "blocked_moves": 79.83333333333333,
+            "duplicate_commitments": 38.166666666666664
+          },
           "episodes": [
             {
               "seed": 0,
@@ -267,6 +274,13 @@
             "messages_sent": 400,
             "blocked_moves": 68.375,
             "duplicate_commitments": 31.333333333333332
+          },
+          "iqms": {
+            "team_return": 208.33333333333334,
+            "completed_orders": 10.416666666666666,
+            "messages_sent": 400,
+            "blocked_moves": 68.5,
+            "duplicate_commitments": 25.083333333333332
           },
           "episodes": [
             {
@@ -471,6 +485,13 @@
             "blocked_moves": 68.375,
             "duplicate_commitments": 31.333333333333332
           },
+          "iqms": {
+            "team_return": 208.33333333333334,
+            "completed_orders": 10.416666666666666,
+            "messages_sent": 39.5,
+            "blocked_moves": 68.5,
+            "duplicate_commitments": 25.083333333333332
+          },
           "episodes": [
             {
               "seed": 0,
@@ -674,6 +695,13 @@
             "blocked_moves": 78.63541666666667,
             "duplicate_commitments": 45.380208333333336
           },
+          "iqms": {
+            "team_return": 201.875,
+            "completed_orders": 10.09375,
+            "messages_sent": 46.854166666666664,
+            "blocked_moves": 77.89583333333333,
+            "duplicate_commitments": 38.177083333333336
+          },
           "episodes": [
             {
               "seed": 0,
@@ -871,9 +899,48 @@
         }
       },
       "always_send_reward_retained": 1.0,
+      "team_return": {
+        "silent": {
+          "iqm": 200,
+          "iqm_95_percent_interval": [
+            193.33333333333334,
+            205
+          ],
+          "mean": 199.16666666666666
+        },
+        "always_send": {
+          "iqm": 208.33333333333334,
+          "iqm_95_percent_interval": [
+            198.33333333333334,
+            216.66666666666666
+          ],
+          "mean": 205
+        },
+        "conflict_rule": {
+          "iqm": 208.33333333333334,
+          "iqm_95_percent_interval": [
+            198.33333333333334,
+            216.66666666666666
+          ],
+          "mean": 205
+        },
+        "random_matched": {
+          "iqm": 201.875,
+          "iqm_95_percent_interval": [
+            196.45833333333334,
+            206.04166666666666
+          ],
+          "mean": 200.52083333333334
+        }
+      },
       "rule_vs_random_reward": {
+        "iqm_difference": 6.458333333333343,
+        "iqm_difference_95_percent_interval": [
+          -1.25,
+          13.75
+        ],
         "mean_difference": 4.479166666666667,
-        "bootstrap_95_percent_interval": [
+        "mean_difference_95_percent_interval": [
           -0.20833333333333334,
           9.6875
         ]
@@ -889,6 +956,13 @@
             "messages_sent": 0,
             "blocked_moves": 197.75,
             "duplicate_commitments": 25.333333333333332
+          },
+          "iqms": {
+            "team_return": 138.33333333333334,
+            "completed_orders": 6.916666666666667,
+            "messages_sent": 0,
+            "blocked_moves": 190.16666666666666,
+            "duplicate_commitments": 25.166666666666668
           },
           "episodes": [
             {
@@ -1093,6 +1167,13 @@
             "blocked_moves": 185.625,
             "duplicate_commitments": 12.041666666666666
           },
+          "iqms": {
+            "team_return": 151.66666666666666,
+            "completed_orders": 7.583333333333333,
+            "messages_sent": 400,
+            "blocked_moves": 192.91666666666666,
+            "duplicate_commitments": 10.666666666666666
+          },
           "episodes": [
             {
               "seed": 0,
@@ -1295,6 +1376,13 @@
             "messages_sent": 30.5,
             "blocked_moves": 185.625,
             "duplicate_commitments": 12.041666666666666
+          },
+          "iqms": {
+            "team_return": 151.66666666666666,
+            "completed_orders": 7.583333333333333,
+            "messages_sent": 30,
+            "blocked_moves": 192.91666666666666,
+            "duplicate_commitments": 10.666666666666666
           },
           "episodes": [
             {
@@ -1499,6 +1587,13 @@
             "blocked_moves": 196.72916666666666,
             "duplicate_commitments": 24.546875
           },
+          "iqms": {
+            "team_return": 139.375,
+            "completed_orders": 6.96875,
+            "messages_sent": 26.979166666666668,
+            "blocked_moves": 189.875,
+            "duplicate_commitments": 24.989583333333332
+          },
           "episodes": [
             {
               "seed": 0,
@@ -1696,9 +1791,48 @@
         }
       },
       "always_send_reward_retained": 1.0,
+      "team_return": {
+        "silent": {
+          "iqm": 138.33333333333334,
+          "iqm_95_percent_interval": [
+            131.66666666666666,
+            146.66666666666666
+          ],
+          "mean": 139.16666666666666
+        },
+        "always_send": {
+          "iqm": 151.66666666666666,
+          "iqm_95_percent_interval": [
+            143.33333333333334,
+            160
+          ],
+          "mean": 154.16666666666666
+        },
+        "conflict_rule": {
+          "iqm": 151.66666666666666,
+          "iqm_95_percent_interval": [
+            143.33333333333334,
+            160
+          ],
+          "mean": 154.16666666666666
+        },
+        "random_matched": {
+          "iqm": 139.375,
+          "iqm_95_percent_interval": [
+            131.45833333333334,
+            146.66666666666666
+          ],
+          "mean": 139.27083333333334
+        }
+      },
       "rule_vs_random_reward": {
+        "iqm_difference": 12.291666666666657,
+        "iqm_difference_95_percent_interval": [
+          1.6666666666666856,
+          25.0
+        ],
         "mean_difference": 14.895833333333334,
-        "bootstrap_95_percent_interval": [
+        "mean_difference_95_percent_interval": [
           5.104166666666667,
           25.3125
         ]

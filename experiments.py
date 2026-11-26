@@ -32,18 +32,89 @@ from pilot import (
     silent,
 )
 
+# Seed ranges never overlap: calibration 100-123, training 1000-1511 (see
+# learned.py), held-out evaluation 2000-2047. The heuristic experiment
+# evaluates on the pilot seeds 0-23.
 CALIBRATION_SEEDS = range(100, 124)
+# Random gates are averaged over this many runs per seed to reduce their noise.
 RANDOM_REPEATS = 8
+# Bisection steps when matching a random gate's message budget.
 CALIBRATION_STEPS = 8
 HELD_OUT_SEEDS = range(2000, 2048)
+BOOTSTRAP_RESAMPLES = 2000
+# Paired adjusted-reward comparisons reported at every message cost.
+SWEEP_COMPARISONS = (
+    ("learned", "silent"),
+    ("learned", "always_send"),
+    ("learned", "conflict_rule"),
+    ("learned", "random_matched_to_learned"),
+    ("conflict_rule", "silent"),
+    ("conflict_rule", "always_send"),
+    ("conflict_rule", "random_matched"),
+    ("always_send", "silent"),
+)
+
+
+def iqm(values):
+    """Interquartile mean: the mean after trimming 25% from each end.
+
+    Matches scipy.stats.trim_mean(values, 0.25), which the rliable library
+    uses: floor(n / 4) values are dropped from each end.
+    """
+    ordered = sorted(values)
+    cut = len(ordered) // 4
+    return mean(ordered[cut : len(ordered) - cut])
+
+
+def percentile_interval(resamples):
+    """Return the 2.5th and 97.5th percentiles of bootstrap resamples."""
+    ordered = sorted(resamples)
+    count = len(ordered)
+    return [ordered[round(0.025 * count)], ordered[round(0.975 * count) - 1]]
+
+
+def bootstrap_seeds(seeds, statistic):
+    """Percentile bootstrap over seeds. ``statistic`` maps a seed list to a float."""
+    rng = Random(0)
+    return percentile_interval(
+        [statistic(rng.choices(seeds, k=len(seeds))) for _ in range(BOOTSTRAP_RESAMPLES)]
+    )
+
+
+def summarize(values_by_seed):
+    """IQM and mean over seeds, with a bootstrap 95% interval for the IQM."""
+    seeds = sorted(values_by_seed)
+    return {
+        "iqm": iqm(values_by_seed.values()),
+        "iqm_95_percent_interval": bootstrap_seeds(
+            seeds, lambda sample: iqm(values_by_seed[seed] for seed in sample)
+        ),
+        "mean": mean(values_by_seed.values()),
+    }
+
+
+def adjusted_returns(condition, cost):
+    """Per-seed team reward minus the message cost times messages sent."""
+    return {
+        episode["seed"]: episode["team_return"] - cost * episode["messages_sent"]
+        for episode in condition["episodes"]
+    }
 
 
 def random_policy(rate, seed, repeat, *, eligible_only=False):
+    """Send with probability ``rate`` per tick, or per eligible tick.
+
+    With ``eligible_only``, only ticks where the learned gate could act count
+    as opportunities. That gives a random baseline with the same eligibility
+    as the learned gate.
+    """
     # Draw independently of the simulator RNG so each condition shares setup
     # and collision recovery draws with its paired scenarios.
     rng = Random(f"random-send:{seed}:{repeat}")
 
     def send(controller, state, sender, intent):
+        # The draw comes first and happens every tick, so the random stream
+        # does not depend on which ticks are eligible.
         return rng.random() < rate and (
             not eligible_only or send_features(controller, state, sender, intent) is not None
         )
@@ -52,6 +123,8 @@ def random_policy(rate, seed, repeat, *, eligible_only=False):
 
 
 def eligible_random_policy(rate):
+    """Policy factory for a random gate limited to learned-gate opportunities."""
+
     def make_policy(seed, repeat):
         return random_policy(rate, seed, repeat, eligible_only=True)
 
@@ -59,6 +132,12 @@ def eligible_random_policy(rate):
 
 
 def evaluate(controller, seeds, make_policy, repeats=1):
+    """Run a condition on each seed and summarize its metrics.
+
+    ``make_policy(seed, repeat)`` builds a fresh send policy for each run.
+    With several repeats, each seed's metrics are averaged first, so every
+    seed counts once in the summaries and in paired comparisons.
+    """
     episodes = []
     for seed in seeds:
         trials = []
@@ -73,38 +152,49 @@ def evaluate(controller, seeds, make_policy, repeats=1):
         "means": {
             metric: mean(episode[metric] for episode in episodes) for metric in trials[0]
         },
+        "iqms": {metric: iqm(episode[metric] for episode in episodes) for metric in trials[0]},
         "episodes": episodes,
     }
 
 
 def compare_rewards(policy, reference, message_cost=0):
-    """Bootstrap communication-adjusted reward differences paired by seed."""
-    policy_episodes = policy["episodes"]
-    reference_episodes = reference["episodes"]
-    policy_by_seed = {episode["seed"]: episode for episode in policy_episodes}
-    reference_by_seed = {episode["seed"]: episode for episode in reference_episodes}
-    if len(policy_by_seed) != len(policy_episodes) or len(reference_by_seed) != len(
-        reference_episodes
-    ):
-        raise ValueError("Reward comparisons require one episode per seed per condition")
-    if not policy_by_seed or policy_by_seed.keys() != reference_by_seed.keys():
+    """Compare communication-adjusted reward between two conditions, paired by seed.
+
+    The headline statistic is the difference in IQM between the two
+    conditions. Each bootstrap resample draws seeds with replacement and uses
+    the same seeds for both conditions, so the interval keeps the pairing.
+    The mean of the per-seed differences is kept for comparison.
+    """
+    for condition in (policy, reference):
+        seeds = [episode["seed"] for episode in condition["episodes"]]
+        if len(set(seeds)) != len(seeds):
+            raise ValueError("Reward comparisons require one episode per seed per condition")
+    trial = adjusted_returns(policy, message_cost)
+    baseline = adjusted_returns(reference, message_cost)
+    if not trial or trial.keys() != baseline.keys():
         raise ValueError("Reward comparisons require the same nonempty set of seeds")
 
-    deltas = []
-    for seed in sorted(policy_by_seed):
-        trial, baseline = policy_by_seed[seed], reference_by_seed[seed]
-        reward_delta = trial["team_return"] - baseline["team_return"]
-        message_delta = trial["messages_sent"] - baseline["messages_sent"]
-        deltas.append(reward_delta - message_cost * message_delta)
-    rng = Random(0)
-    resamples = sorted(mean(rng.choices(deltas, k=len(deltas))) for _ in range(2000))
+    def iqm_difference(sample):
+        return iqm(trial[seed] for seed in sample) - iqm(baseline[seed] for seed in sample)
+
+    seeds = sorted(trial)
+    deltas = [trial[seed] - baseline[seed] for seed in seeds]
     return {
+        "iqm_difference": iqm_difference(seeds),
+        "iqm_difference_95_percent_interval": bootstrap_seeds(seeds, iqm_difference),
         "mean_difference": mean(deltas),
-        "bootstrap_95_percent_interval": [resamples[50], resamples[1949]],
+        "mean_difference_95_percent_interval": bootstrap_seeds(
+            list(range(len(deltas))), lambda sample: mean(deltas[i] for i in sample)
+        ),
     }
 
 
 def evaluate_baselines(controller, seeds, calibration_seeds=CALIBRATION_SEEDS):
+    """Evaluate the fixed gates, plus a random gate matched to the heuristic.
+
+    The random gate's per-tick rate is the heuristic's mean messages per tick
+    on the calibration seeds, so the two spend about the same budget.
+    """
     calibration = evaluate(controller, calibration_seeds, lambda *_: conflict_rule)
     rate = calibration["means"]["messages_sent"] / HORIZON
     return rate, {
@@ -120,13 +210,14 @@ def evaluate_baselines(controller, seeds, calibration_seeds=CALIBRATION_SEEDS):
     }
 
 
-def adjusted_return(condition, cost):
-    means = condition["means"]
-    return means["team_return"] - cost * means["messages_sent"]
-
-
 def match_message_budget(messages_at_rate, target):
-    """Find a per-opportunity rate close to the target calibration volume."""
+    """Find a per-opportunity rate close to the target calibration volume.
+
+    Bisects on the rate, assuming messages rise with the rate. Returns the
+    tried rate whose message count was closest to ``target``, along with that
+    count. ``messages_at_rate`` is cached by the caller, so repeated rates
+    cost nothing.
+    """
     if target == 0:
         return 0.0, 0.0
     lower, upper = 0.0, 1.0
@@ -148,6 +239,7 @@ def match_message_budget(messages_at_rate, target):
 
 
 def run_heuristic():
+    """Compare the heuristic gate with its matched random gate on the pilot seeds."""
     results = {
         "horizon": HORIZON,
         "evaluation_seeds": list(range(SCENARIOS)),
@@ -166,12 +258,23 @@ def run_heuristic():
             "always_send_reward_retained": (
                 rule["means"]["team_return"] / full["means"]["team_return"]
             ),
+            "team_return": {
+                name: summarize(adjusted_returns(condition, 0))
+                for name, condition in conditions.items()
+            },
             "rule_vs_random_reward": compare_rewards(rule, conditions["random_matched"]),
         }
     return results
 
 
 def run_learned(costs=DEFAULT_COSTS):
+    """Fit the learned gate at each cost and score every condition on held-out seeds.
+
+    For each layout: collect paired training transitions once, evaluate the
+    fixed baselines once, then for each cost fit a policy, match a random gate
+    to its message budget on the calibration seeds, and compare all
+    conditions on the held-out seeds.
+    """
     results = {
         "horizon": HORIZON,
         "training_seeds": list(TRAINING_SEEDS),
@@ -189,6 +292,7 @@ def run_learned(costs=DEFAULT_COSTS):
         probes = collect_send_probes(controller)
         baseline_rate, baselines = evaluate_baselines(controller, HELD_OUT_SEEDS)
 
+        # Cached per layout: bisection revisits rates across costs.
         @cache
         def messages_at_rate(rate):
             return evaluate(
@@ -201,6 +305,8 @@ def run_learned(costs=DEFAULT_COSTS):
         sweep = []
         for cost in costs:
             policy = fit_send_policy(probes, cost)
+            # Calibration seeds set the random gate's budget, so the held-out
+            # comparison is not tuned on the seeds it reports.
             calibration = evaluate(controller, CALIBRATION_SEEDS, lambda *_: policy)
             target_messages = calibration["means"]["messages_sent"]
             rate, matched_messages = match_message_budget(messages_at_rate, target_messages)
@@ -224,13 +330,18 @@ def run_learned(costs=DEFAULT_COSTS):
                     "calibration_random_messages": matched_messages,
                     "learned": learned,
                     "random_matched_to_learned": random_matched,
-                    "mean_adjusted_return": {
-                        name: adjusted_return(condition, cost)
+                    # All conditions share the held-out seeds, so every row
+                    # of the sweep compares them on the same episodes.
+                    "adjusted_return": {
+                        name: summarize(adjusted_returns(condition, cost))
                         for name, condition in conditions.items()
                     },
-                    "learned_vs_random_adjusted_return": compare_rewards(
-                        learned, random_matched, cost
-                    ),
+                    "comparisons": {
+                        f"{policy}_vs_{reference}": compare_rewards(
+                            conditions[policy], conditions[reference], cost
+                        )
+                        for policy, reference in SWEEP_COMPARISONS
+                    },
                 }
             )
         results["layouts"][layout] = {

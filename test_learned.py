@@ -2,7 +2,13 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from experiments import eligible_random_policy, match_message_budget
+from experiments import (
+    compare_rewards,
+    eligible_random_policy,
+    iqm,
+    match_message_budget,
+    summarize,
+)
 from learned import Outcome, Probe, Rollout, fit_send_policy, time_bin
 from pilot import HORIZON, Intent
 
@@ -60,6 +66,38 @@ class SendPolicyTests(unittest.TestCase):
         self.assertEqual(match_message_budget(lambda rate: 40 * rate, 15), (0.375, 15))
         self.assertEqual(match_message_budget(lambda rate: 40 * rate, 40), (1.0, 40))
         self.assertEqual(match_message_budget(lambda rate: 40 * rate, 0), (0.0, 0.0))
+
+
+class StatisticsTests(unittest.TestCase):
+    def test_iqm_trims_a_quarter_from_each_end(self):
+        self.assertEqual(iqm([100, 1, 2, 3, 4, 5, 6, -100]), 3.5)
+        # floor(10 / 4) = 2 values are dropped from each end, as in trim_mean.
+        self.assertEqual(iqm(range(10)), 4.5)
+        self.assertEqual(iqm([7]), 7)
+
+    def test_summary_interval_brackets_the_iqm(self):
+        summary = summarize({seed: float(seed % 7) for seed in range(48)})
+        low, high = summary["iqm_95_percent_interval"]
+        self.assertLessEqual(low, summary["iqm"])
+        self.assertLessEqual(summary["iqm"], high)
+
+    def test_comparison_charges_message_cost_per_seed(self):
+        def condition(rewards, messages):
+            return {
+                "episodes": [
+                    {"seed": seed, "team_return": reward, "messages_sent": sent}
+                    for seed, (reward, sent) in enumerate(zip(rewards, messages))
+                ]
+            }
+
+        policy = condition([10, 10, 10, 10], [4, 4, 4, 4])
+        reference = condition([8, 8, 8, 8], [0, 0, 0, 0])
+        free = compare_rewards(policy, reference)
+        self.assertEqual(free["iqm_difference"], 2)
+        self.assertEqual(free["iqm_difference_95_percent_interval"], [2, 2])
+        self.assertEqual(compare_rewards(policy, reference, 1.0)["iqm_difference"], -2)
+        with self.assertRaises(ValueError):
+            compare_rewards(policy, condition([1], [0]))
 
 
 if __name__ == "__main__":

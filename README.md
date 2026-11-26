@@ -57,17 +57,21 @@ after this decision.
 We evaluated the rule on the original 24 paired seeds per layout. The random
 policy makes an independent send decision each tick. We calibrated its rate
 on seeds 100–123 per layout and averaged eight random runs per evaluation seed.
+Values are interquartile means (IQMs) over seeds. The gain is the rule's IQM
+minus the random policy's IQM, with a paired bootstrap 95% interval (see
+[Statistics](#statistics)).
 
 | Layout | Rule reward | Rule messages | Random reward | Random messages | Paired reward gain (95% interval) |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Cramped Room | 205.00 | 43.58 | 200.52 | 47.08 | +4.48 (−0.21 to +9.69) |
-| Coordination Ring | 154.17 | 30.50 | 139.27 | 27.04 | +14.90 (+5.10 to +25.31) |
+| Cramped Room | 208.33 | 39.50 | 201.88 | 46.85 | +6.46 (−1.25 to +13.75) |
+| Coordination Ring | 151.67 | 30.00 | 139.38 | 26.98 | +12.29 (+1.67 to +25.00) |
 
-The rule matched always-send reward on every paired seed. It used 89.1% fewer
-messages on Cramped Room and 92.4% fewer on Coordination Ring. The paired
-bootstrap interval for Cramped Room includes zero. The interval for Coordination
-Ring favors the rule. See [heuristic-results.json](heuristic-results.json) for
-per-seed metrics and the calibration rates.
+The rule matched always-send reward on every paired seed. On average it used
+89.1% fewer messages on Cramped Room and 92.4% fewer on Coordination Ring. The
+interval for Cramped Room includes zero. The interval for Coordination Ring
+favors the rule. The mean-based comparison agrees: +4.48 (−0.21 to +9.69) and
++14.90 (+5.10 to +25.31). See [heuristic-results.json](heuristic-results.json)
+for per-seed metrics, both statistics and the calibration rates.
 
 ## Learned sending
 
@@ -144,28 +148,85 @@ baseline for the learned gate uses the same eligible conflict opportunities.
 We calibrated its per-opportunity probability on seeds 100–123 to approximate
 the learned gate's mean message count at each cost.
 
-| Layout | Cost per message | Reward | Messages | Adjusted reward |
-| --- | ---: | ---: | ---: | ---: |
-| Cramped Room | 0.00 | 204.58 | 17.88 | 204.58 |
-| Cramped Room | 0.10 | 204.17 | 16.06 | 202.56 |
-| Cramped Room | 0.25 | 203.75 | 13.94 | 200.27 |
-| Cramped Room | 0.50 | 204.17 | 11.35 | 198.49 |
-| Coordination Ring | 0.00 | 146.25 | 6.29 | 146.25 |
-| Coordination Ring | 0.10 | 146.25 | 6.04 | 145.65 |
-| Coordination Ring | 0.25 | 147.92 | 5.48 | 146.55 |
-| Coordination Ring | 0.50 | 150.00 | 4.63 | 147.69 |
+## Cost sweep
 
-At a cost of 0.50 on Coordination Ring, the learned policy kept 99.4% of
-always-send reward. It earned 8.57 more adjusted reward points than the
-random baseline with the same eligibility rules (paired 95% interval from
-+2.54 to +14.24). Both policies averaged 5.54 messages on the calibration
-seeds. On the held-out seeds, the learned policy averaged 4.63 messages and
-the random baseline averaged 5.84. At a cost of 0.25, the paired gain was 5.52
-(+0.04 to +10.90). The two lower-cost intervals include zero. On Cramped Room,
-silence tied the learned policy at zero cost and scored higher at all three
-positive costs. See
-[learned-results.json](learned-results.json) for all baseline comparisons and
-per-seed metrics.
+All four conditions are scored on the same 48 held-out seeds at each message
+cost. Adjusted reward is team reward minus the cost times messages sent, per
+episode. Silent, always-send and the heuristic do not change with cost, so only
+their adjusted reward moves. The learned gate is refit for each cost.
+
+![IQM adjusted reward against message cost for each condition](figures/cost-sweep.png)
+
+Shaded bands are bootstrap 95% intervals for each condition's IQM.
+Always-send pays for 400 messages per episode and leaves the plotted range
+by a cost of 0.10.
+
+| Layout | Cost | Silent | Always send | Heuristic | Learned | Learned messages |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Cramped Room | 0.00 | 205.83 | 208.33 | 208.33 | 209.17 | 12.29 |
+| Cramped Room | 0.10 | 205.83 | 168.33 | 203.98 | 206.22 | 12.29 |
+| Cramped Room | 0.25 | 205.83 | 108.33 | 197.45 | 204.71 | 10.25 |
+| Cramped Room | 0.50 | 205.83 | 8.33 | 186.56 | 202.88 | 8.17 |
+| Coordination Ring | 0.00 | 140.00 | 151.67 | 151.67 | 148.33 | 6.08 |
+| Coordination Ring | 0.10 | 140.00 | 111.67 | 148.57 | 147.66 | 5.92 |
+| Coordination Ring | 0.25 | 140.00 | 51.67 | 143.94 | 147.71 | 5.33 |
+| Coordination Ring | 0.50 | 140.00 | −48.33 | 136.21 | 147.60 | 4.54 |
+
+Values are IQM adjusted reward, and the last column is the learned gate's IQM
+messages per episode. The heuristic sends a mean of 44.8 messages on Cramped
+Room and 29.2 on Coordination Ring at every cost.
+
+Paired differences in IQM adjusted reward, with bootstrap 95% intervals:
+
+| Layout | Cost | Learned − silent | Learned − heuristic | Learned − random | Heuristic − silent |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Cramped Room | 0.00 | +3.33 (−5.83 to +10.00) | +0.83 (−5.83 to +8.33) | +0.94 (−6.04 to +5.21) | +2.50 (−6.67 to +9.17) |
+| Cramped Room | 0.10 | +0.39 (−7.80 to +6.80) | +2.25 (−4.45 to +10.55) | −0.71 (−7.76 to +4.18) | −1.85 (−12.15 to +5.67) |
+| Cramped Room | 0.25 | −1.12 (−10.68 to +5.45) | +7.26 (−0.09 to +15.39) | −0.02 (−8.96 to +6.01) | −8.39 (−19.55 to +0.02) |
+| Cramped Room | 0.50 | −2.96 (−12.65 to +3.92) | +16.31 (+8.08 to +25.71) | +0.66 (−8.60 to +7.38) | −19.27 (−32.19 to −8.96) |
+| Coordination Ring | 0.00 | +8.33 (+2.50 to +15.00) | −3.33 (−10.83 to +4.17) | +4.69 (−1.25 to +10.00) | +11.67 (+5.00 to +18.33) |
+| Coordination Ring | 0.10 | +7.66 (+1.79 to +14.34) | −0.92 (−8.48 to +6.58) | +5.02 (−0.93 to +10.47) | +8.57 (+2.22 to +15.06) |
+| Coordination Ring | 0.25 | +7.71 (+1.79 to +14.39) | +3.77 (−3.83 to +11.46) | +7.67 (+1.64 to +13.21) | +3.94 (−2.02 to +10.16) |
+| Coordination Ring | 0.50 | +7.60 (+2.06 to +14.00) | +11.40 (+3.83 to +18.77) | +8.95 (+3.29 to +14.33) | −3.79 (−9.60 to +2.02) |
+
+"Random" is the random gate with the learned gate's eligibility rules,
+calibrated to its message budget at each cost.
+
+On Coordination Ring, the learned gate beat silence at every cost. It beat the
+matched random gate at 0.25 and 0.50, and the heuristic at 0.50. The
+heuristic's advantage over silence shrinks as cost rises, because it sends
+about 29 messages per episode to the learned gate's 5 or 6. On Cramped Room, no learned-gate interval excludes
+zero against silence or random. The learned gate beat the heuristic at 0.50,
+and the heuristic fell below silence there. By mean adjusted reward, silence
+led the learned gate by 2.02, 4.32 and 6.09 points at the three positive costs
+on Cramped Room. The IQM drops the top and bottom quarter of episodes, so the
+two statistics can disagree in size. See
+[learned-results.json](learned-results.json) for every pairwise comparison,
+both statistics and per-seed metrics.
+
+## Statistics
+
+Each condition is summarized by its interquartile mean (IQM) over evaluation
+seeds: the mean after dropping the lowest and highest quarter of episodes,
+as in `scipy.stats.trim_mean(x, 0.25)`. IQM is less sensitive to a few
+unusual episodes than the mean and less noisy than the median. A
+condition's interval is a 2000-sample percentile bootstrap over seeds. A
+comparison between two conditions reports the difference of their IQMs. Each
+bootstrap sample draws seeds with replacement and uses the same seeds for
+both conditions, so the interval keeps the seed pairing. The results files
+also keep the mean and the bootstrap interval of the per-seed mean
+difference. Random baselines average eight runs per seed before the
+summary.
+
+## Code
+
+| File | What it does |
+| --- | --- |
+| [`pilot.py`](pilot.py) | Scripted controller, the silent, always-send and heuristic gates, and the episode loop. Runs the silent vs always-send pilot. |
+| [`learned.py`](learned.py) | Paired replay and the finite-horizon Q fit for the learned gate. |
+| [`experiments.py`](experiments.py) | Random baselines and their calibration, IQM and bootstrap statistics, and the heuristic and cost-sweep experiments. |
+| [`plots.py`](plots.py) | Draws the cost-sweep figure from `learned-results.json`. |
+| [`test_learned.py`](test_learned.py) | Unit tests for the Q targets, the eligibility rules, budget matching and the statistics. |
 
 ## Run it locally
 
@@ -182,6 +243,7 @@ cmp pilot-results.json /tmp/overcooked-pilot.json
 cmp heuristic-results.json /tmp/overcooked-heuristic.json
 .venv/bin/python experiments.py learned --output /tmp/overcooked-learned.json
 cmp learned-results.json /tmp/overcooked-learned.json
+.venv/bin/python plots.py --results learned-results.json --output figures/cost-sweep.png
 ```
 
 [`pilot-results.json`](pilot-results.json) contains both conditions' metrics

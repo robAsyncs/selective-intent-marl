@@ -14,9 +14,13 @@ from overcooked_ai_py.mdp.actions import Action, Direction
 from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld, OvercookedState
 
 LAYOUTS = ("cramped_room", "coordination_ring")
+# Ticks per episode. Both agents act once per tick.
 HORIZON = 400
+# Paired seeds for the silent vs always-send pilot.
 SCENARIOS = 24
-# Both agents can add onions to a pot with room for more than one.
+# Tasks whose target only one agent can usefully claim at a time, so two
+# agents choosing the same target duplicate work. "add_onion" is left out:
+# both agents can add onions to a pot with room for more than one.
 EXCLUSIVE_TASKS = {
     "fetch_onion",
     "fetch_dish",
@@ -28,10 +32,13 @@ EXCLUSIVE_TASKS = {
 
 @dataclass(frozen=True)
 class Intent:
+    """A private plan: a task name and the kitchen tile it interacts with."""
+
     task: str
     target: tuple[int, int] | None
 
     def conflicts_with(self, other: "Intent | None") -> bool:
+        """True when both intents claim the same tile with exclusive tasks."""
         return (
             other is not None
             and self.target == other.target
@@ -42,6 +49,9 @@ class Intent:
 
 @dataclass
 class Metrics:
+    """Per-episode totals reported for every condition."""
+
+    # Sum of both agents' sparse rewards (20 per delivered soup).
     team_return: int = 0
     completed_orders: int = 0
     messages_sent: int = 0
@@ -50,14 +60,31 @@ class Metrics:
 
 
 class Controller:
+    """Scripted task choice and shortest-path movement, shared by every condition.
+
+    The controller is fixed across conditions, so any difference in outcome
+    comes from whether a message was sent.
+    """
+
     def __init__(self, mdp):
         self.mdp = mdp
         self.floor = frozenset(mdp.get_valid_player_positions())
 
+        # Per-instance cache: every argument is hashable, and routes depend only
+        # on the static layout plus these arguments.
         self.route = lru_cache(maxsize=8192)(self._route)
 
     def _route(self, position, facing, target, occupied, directions):
-        """Return the number of steps and the first action needed to interact."""
+        """Return the number of steps and the first action needed to interact.
+
+        Breadth-first search over (tile, facing) pairs, because an agent must
+        face the target tile to interact with it. The step count includes the
+        final INTERACT. ``occupied`` is a tile to route around, such as the
+        teammate's position. ``directions`` fixes the expansion order, which
+        breaks ties between equally short routes. Returns None if the target
+        cannot be reached.
+        """
+        # Queue entries: (tile, facing, first action taken, steps so far).
         queue = deque([(position, facing, None, 0)])
         visited = {(position, facing)}
         while queue:
@@ -87,7 +114,10 @@ class Controller:
 
     def candidates(self, state, player):
         """List tasks based on what the player is carrying and which pots are open."""
+        # get_pot_states returns a defaultdict, so missing keys are empty lists.
         pots = self.mdp.get_pot_states(state)
+        # Pots that can still take an onion. A pot with three onions waits for
+        # an INTERACT ("start_soup") before it cooks.
         open_pots = pots["empty"] + pots["1_items"] + pots["2_items"]
         if not player.has_object():
             if pots["ready"] or pots["cooking"]:
@@ -116,7 +146,12 @@ class Controller:
             )
 
     def decide(self, state, index, directions, message=None, back_off=()):
-        """Choose an intended task and the action to take this tick."""
+        """Choose an intended task and the action to take this tick.
+
+        Picks the nearest reachable candidate task. ``message`` is the
+        teammate's announced intent, if one was sent this tick. ``back_off``
+        lists directions to try stepping aside after a collision.
+        """
         player = state.players[index]
         teammate = state.players[1 - index]
         # After a collision, one player tries to step aside before choosing a task.
@@ -127,6 +162,8 @@ class Controller:
 
         options = []
         for intent in self.candidates(state, player):
+            # Plan as if the teammate were absent. Collisions are resolved by
+            # the simulator and the back-off step above.
             route = self.route(
                 player.position, player.orientation, intent.target, None, directions
             )
@@ -134,7 +171,8 @@ class Controller:
                 continue
             distance, action = route
             if intent.conflicts_with(message):
-                # Give way if the sender can get there as quickly while avoiding us.
+                # Give way if the sender can get there as quickly while avoiding
+                # us. This is the only place a message changes behavior.
                 sender_route = self.route(
                     teammate.position,
                     teammate.orientation,
@@ -160,7 +198,10 @@ class Controller:
         return None, Action.STAY
 
     def attempted_position(self, player, action):
-        """Return the destination before the simulator resolves player collisions."""
+        """Return the destination before the simulator resolves player collisions.
+
+        Used to count moves that a collision cancels.
+        """
         if action == Action.INTERACT:
             return player.position
         tile = Action.move_in_direction(player.position, action)
@@ -173,10 +214,12 @@ SendPolicy = Callable[[Controller, OvercookedState, int, Intent | None], bool]
 
 
 def silent(controller, state, sender, intent):
+    """Never send. The no-communication baseline."""
     return False
 
 
 def always_send(controller, state, sender, intent):
+    """Send every tick. The full sequential-communication baseline."""
     return True
 
 
@@ -186,7 +229,14 @@ def competition_distances(
     sender: int,
     intent: Intent | None,
 ) -> tuple[int, int] | None:
-    """Find a reachable exclusive target the teammate could also use."""
+    """Find a reachable exclusive target the teammate could also use.
+
+    Returns (sender steps, teammate steps) when a message could change the
+    receiver's choice, or None otherwise. A message only redirects the
+    receiver when the receiver would pick the same exclusive target and the
+    sender can get there at least as fast while routing around the receiver.
+    This mirrors the give-way test in Controller.decide.
+    """
     if intent is None or intent.task not in EXCLUSIVE_TASKS:
         return None
 
@@ -216,6 +266,7 @@ def competition_distances(
 
 
 def conflict_rule(controller, state, sender, intent):
+    """Heuristic gate: send only when the message could redirect the receiver."""
     return competition_distances(controller, state, sender, intent) is not None
 
 
@@ -227,7 +278,17 @@ def run_episode(
     capture_trace: bool = False,
     observe_reward: Callable[[int], None] | None = None,
 ):
-    """Run an episode with optional reward observation and first-message tracing."""
+    """Run an episode with optional reward observation and first-message tracing.
+
+    Each tick, the sender picks its intent, the gate decides whether to send
+    it, and then the receiver picks its intent with or without the message.
+    Both actions are applied together. ``observe_reward`` receives the team
+    reward from every tick, in order.
+
+    Every random draw comes from ``seed`` and is made the same way whatever
+    the send policy does. Two conditions run with the same seed therefore
+    differ only through the messages.
+    """
     rng = Random(seed)
     directions = tuple(
         tuple(rng.sample(list(Direction.ALL_DIRECTIONS), 4)) for _ in range(2)
@@ -243,6 +304,7 @@ def run_episode(
         # Alternate who chooses first. Both actions still happen together.
         sender = (seed + tick) % 2
         receiver = 1 - sender
+        # After a collision, one randomly chosen player steps aside next tick.
         # Draw on every tick so paired scenarios share recovery randomness.
         recovery_player = rng.randrange(2)
         back_off_directions = rng.sample(list(Direction.ALL_DIRECTIONS), 4)

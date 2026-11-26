@@ -612,6 +612,13 @@
             "blocked_moves": 78.85416666666667,
             "duplicate_commitments": 43.1875
           },
+          "iqms": {
+            "team_return": 205.83333333333334,
+            "completed_orders": 10.291666666666666,
+            "messages_sent": 0,
+            "blocked_moves": 78.33333333333333,
+            "duplicate_commitments": 34.541666666666664
+          },
           "episodes": [
             {
               "seed": 2000,
@@ -1006,6 +1013,13 @@
             "messages_sent": 400,
             "blocked_moves": 68.91666666666667,
             "duplicate_commitments": 34.020833333333336
+          },
+          "iqms": {
+            "team_return": 208.33333333333334,
+            "completed_orders": 10.416666666666666,
+            "messages_sent": 400,
+            "blocked_moves": 67.41666666666667,
+            "duplicate_commitments": 30.458333333333332
           },
           "episodes": [
             {
@@ -1402,6 +1416,13 @@
             "blocked_moves": 68.91666666666667,
             "duplicate_commitments": 34.020833333333336
           },
+          "iqms": {
+            "team_return": 208.33333333333334,
+            "completed_orders": 10.416666666666666,
+            "messages_sent": 42.5,
+            "blocked_moves": 67.41666666666667,
+            "duplicate_commitments": 30.458333333333332
+          },
           "episodes": [
             {
               "seed": 2000,
@@ -1796,6 +1817,13 @@
             "messages_sent": 47.3125,
             "blocked_moves": 78.02083333333333,
             "duplicate_commitments": 43.3125
+          },
+          "iqms": {
+            "team_return": 206.04166666666666,
+            "completed_orders": 10.302083333333334,
+            "messages_sent": 47.359375,
+            "blocked_moves": 77.14583333333333,
+            "duplicate_commitments": 36.463541666666664
           },
           "episodes": [
             {
@@ -2199,6 +2227,13 @@
               "blocked_moves": 73.25,
               "duplicate_commitments": 39.666666666666664
             },
+            "iqms": {
+              "team_return": 209.16666666666666,
+              "completed_orders": 10.458333333333334,
+              "messages_sent": 12.291666666666666,
+              "blocked_moves": 71.75,
+              "duplicate_commitments": 33.416666666666664
+            },
             "episodes": [
               {
                 "seed": 2000,
@@ -2594,6 +2629,13 @@
               "blocked_moves": 75.02864583333333,
               "duplicate_commitments": 39.192708333333336
             },
+            "iqms": {
+              "team_return": 208.22916666666666,
+              "completed_orders": 10.411458333333334,
+              "messages_sent": 14.927083333333334,
+              "blocked_moves": 74.45833333333333,
+              "duplicate_commitments": 32.802083333333336
+            },
             "episodes": [
               {
                 "seed": 2000,
@@ -2981,20 +3023,153 @@
               }
             ]
           },
-          "mean_adjusted_return": {
-            "silent": 204.58333333333334,
-            "always_send": 204.58333333333334,
-            "conflict_rule": 204.58333333333334,
-            "random_matched": 204.58333333333334,
-            "learned": 204.58333333333334,
-            "random_matched_to_learned": 205.36458333333334
+          "adjusted_return": {
+            "silent": {
+              "iqm": 205.83333333333334,
+              "iqm_95_percent_interval": [
+                200.0,
+                210.83333333333334
+              ],
+              "mean": 204.58333333333334
+            },
+            "always_send": {
+              "iqm": 208.33333333333334,
+              "iqm_95_percent_interval": [
+                198.33333333333334,
+                214.16666666666666
+              ],
+              "mean": 204.58333333333334
+            },
+            "conflict_rule": {
+              "iqm": 208.33333333333334,
+              "iqm_95_percent_interval": [
+                198.33333333333334,
+                214.16666666666666
+              ],
+              "mean": 204.58333333333334
+            },
+            "random_matched": {
+              "iqm": 206.04166666666666,
+              "iqm_95_percent_interval": [
+                202.29166666666666,
+                209.79166666666666
+              ],
+              "mean": 204.58333333333334
+            },
+            "learned": {
+              "iqm": 209.16666666666666,
+              "iqm_95_percent_interval": [
+                200.0,
+                215.0
+              ],
+              "mean": 204.58333333333334
+            },
+            "random_matched_to_learned": {
+              "iqm": 208.22916666666666,
+              "iqm_95_percent_interval": [
+                204.27083333333334,
+                211.35416666666666
+              ],
+              "mean": 205.36458333333334
+            }
           },
-          "learned_vs_random_adjusted_return": {
-            "mean_difference": -0.78125,
-            "bootstrap_95_percent_interval": [
-              -4.010416666666667,
-              2.3958333333333335
-            ]
+          "comparisons": {
+            "learned_vs_silent": {
+              "iqm_difference": 3.3333333333333144,
+              "iqm_difference_95_percent_interval": [
+                -5.833333333333343,
+                10.0
+              ],
+              "mean_difference": 0.0,
+              "mean_difference_95_percent_interval": [
+                -5.0,
+                4.583333333333333
+              ]
+            },
+            "learned_vs_always_send": {
+              "iqm_difference": 0.8333333333333144,
+              "iqm_difference_95_percent_interval": [
+                -5.833333333333314,
+                8.333333333333314
+              ],
+              "mean_difference": 0.0,
+              "mean_difference_95_percent_interval": [
+                -3.75,
+                4.166666666666667
+              ]
+            },
+            "learned_vs_conflict_rule": {
+              "iqm_difference": 0.8333333333333144,
+              "iqm_difference_95_percent_interval": [
+                -5.833333333333314,
+                8.333333333333314
+              ],
+              "mean_difference": 0.0,
+              "mean_difference_95_percent_interval": [
+                -3.75,
+                4.166666666666667
+              ]
+            },
+            "learned_vs_random_matched_to_learned": {
+              "iqm_difference": 0.9375,
+              "iqm_difference_95_percent_interval": [
+                -6.041666666666686,
+                5.208333333333314
+              ],
+              "mean_difference": -0.78125,
+              "mean_difference_95_percent_interval": [
+                -4.010416666666667,
+                2.3958333333333335
+              ]
+            },
+            "conflict_rule_vs_silent": {
+              "iqm_difference": 2.5,
+              "iqm_difference_95_percent_interval": [
+                -6.666666666666686,
+                9.166666666666686
+              ],
+              "mean_difference": 0.0,
+              "mean_difference_95_percent_interval": [
+                -5.0,
+                5.0
+              ]
+            },
+            "conflict_rule_vs_always_send": {
+              "iqm_difference": 0.0,
+              "iqm_difference_95_percent_interval": [
+                0.0,
+                0.0
+              ],
+              "mean_difference": 0.0,
+              "mean_difference_95_percent_interval": [
+                0.0,
+                0.0
+              ]
+            },
+            "conflict_rule_vs_random_matched": {
+              "iqm_difference": 2.2916666666666856,
+              "iqm_difference_95_percent_interval": [
+                -6.770833333333314,
+                8.125
+              ],
+              "mean_difference": 0.0,
+              "mean_difference_95_percent_interval": [
+                -4.583333333333333,
+                4.53125
+              ]
+            },
+            "always_send_vs_silent": {
+              "iqm_difference": 2.5,
+              "iqm_difference_95_percent_interval": [
+                -6.666666666666686,
+                9.166666666666686
+              ],
+              "mean_difference": 0.0,
+              "mean_difference_95_percent_interval": [
+                -5.0,
+                5.0
+              ]
+            }
           }
         },
         {
@@ -3009,6 +3184,13 @@
               "messages_sent": 16.0625,
               "blocked_moves": 73.85416666666667,
               "duplicate_commitments": 42.3125
+            },
+            "iqms": {
+              "team_return": 207.5,
+              "completed_orders": 10.375,
+              "messages_sent": 12.291666666666666,
+              "blocked_moves": 72.70833333333333,
+              "duplicate_commitments": 36.875
             },
             "episodes": [
               {
@@ -3405,6 +3587,13 @@
               "blocked_moves": 75.3359375,
               "duplicate_commitments": 39.127604166666664
             },
+            "iqms": {
+              "team_return": 208.33333333333334,
+              "completed_orders": 10.416666666666666,
+              "messages_sent": 13.90625,
+              "blocked_moves": 74.890625,
+              "duplicate_commitments": 32.755208333333336
+            },
             "episodes": [
               {
                 "seed": 2000,
@@ -3792,20 +3981,153 @@
               }
             ]
           },
-          "mean_adjusted_return": {
-            "silent": 204.58333333333334,
-            "always_send": 164.58333333333334,
-            "conflict_rule": 200.10625000000002,
-            "random_matched": 199.85208333333335,
-            "learned": 202.56041666666667,
-            "random_matched_to_learned": 203.94583333333333
+          "adjusted_return": {
+            "silent": {
+              "iqm": 205.83333333333334,
+              "iqm_95_percent_interval": [
+                200.0,
+                210.83333333333334
+              ],
+              "mean": 204.58333333333334
+            },
+            "always_send": {
+              "iqm": 168.33333333333334,
+              "iqm_95_percent_interval": [
+                158.33333333333334,
+                174.16666666666666
+              ],
+              "mean": 164.58333333333334
+            },
+            "conflict_rule": {
+              "iqm": 203.97916666666666,
+              "iqm_95_percent_interval": [
+                193.74166666666667,
+                210.34583333333333
+              ],
+              "mean": 200.10625
+            },
+            "random_matched": {
+              "iqm": 201.28072916666667,
+              "iqm_95_percent_interval": [
+                197.5546875,
+                204.94739583333333
+              ],
+              "mean": 199.85208333333333
+            },
+            "learned": {
+              "iqm": 206.225,
+              "iqm_95_percent_interval": [
+                197.36666666666667,
+                212.525
+              ],
+              "mean": 202.56041666666667
+            },
+            "random_matched_to_learned": {
+              "iqm": 206.93854166666665,
+              "iqm_95_percent_interval": [
+                202.97552083333332,
+                210.24375
+              ],
+              "mean": 203.94583333333333
+            }
           },
-          "learned_vs_random_adjusted_return": {
-            "mean_difference": -1.3854166666666667,
-            "bootstrap_95_percent_interval": [
-              -5.05,
-              2.2453125000000003
-            ]
+          "comparisons": {
+            "learned_vs_silent": {
+              "iqm_difference": 0.3916666666666515,
+              "iqm_difference_95_percent_interval": [
+                -7.799999999999983,
+                6.800000000000011
+              ],
+              "mean_difference": -2.0229166666666676,
+              "mean_difference_95_percent_interval": [
+                -6.864583333333335,
+                2.858333333333332
+              ]
+            },
+            "learned_vs_always_send": {
+              "iqm_difference": 37.89166666666665,
+              "iqm_difference_95_percent_interval": [
+                31.424999999999983,
+                45.883333333333326
+              ],
+              "mean_difference": 37.97708333333333,
+              "mean_difference_95_percent_interval": [
+                33.697916666666664,
+                42.63333333333333
+              ]
+            },
+            "learned_vs_conflict_rule": {
+              "iqm_difference": 2.245833333333337,
+              "iqm_difference_95_percent_interval": [
+                -4.445833333333326,
+                10.54583333333332
+              ],
+              "mean_difference": 2.4541666666666635,
+              "mean_difference_95_percent_interval": [
+                -1.8875000000000053,
+                7.177083333333332
+              ]
+            },
+            "learned_vs_random_matched_to_learned": {
+              "iqm_difference": -0.7135416666666572,
+              "iqm_difference_95_percent_interval": [
+                -7.759374999999977,
+                4.176562500000017
+              ],
+              "mean_difference": -1.385416666666666,
+              "mean_difference_95_percent_interval": [
+                -5.050000000000002,
+                2.245312500000001
+              ]
+            },
+            "conflict_rule_vs_silent": {
+              "iqm_difference": -1.8541666666666856,
+              "iqm_difference_95_percent_interval": [
+                -12.149999999999977,
+                5.666666666666686
+              ],
+              "mean_difference": -4.477083333333331,
+              "mean_difference_95_percent_interval": [
+                -9.864583333333332,
+                0.7666666666666687
+              ]
+            },
+            "conflict_rule_vs_always_send": {
+              "iqm_difference": 35.645833333333314,
+              "iqm_difference_95_percent_interval": [
+                34.837500000000006,
+                36.55833333333334
+              ],
+              "mean_difference": 35.52291666666667,
+              "mean_difference_95_percent_interval": [
+                34.987500000000004,
+                36.052083333333336
+              ]
+            },
+            "conflict_rule_vs_random_matched": {
+              "iqm_difference": 2.698437499999983,
+              "iqm_difference_95_percent_interval": [
+                -7.011458333333309,
+                9.155729166666674
+              ],
+              "mean_difference": 0.2541666666666688,
+              "mean_difference_95_percent_interval": [
+                -4.689062499999999,
+                5.094791666666671
+              ]
+            },
+            "always_send_vs_silent": {
+              "iqm_difference": -37.5,
+              "iqm_difference_95_percent_interval": [
+                -46.666666666666686,
+                -30.833333333333314
+              ],
+              "mean_difference": -40.0,
+              "mean_difference_95_percent_interval": [
+                -45.0,
+                -35.0
+              ]
+            }
           }
         },
         {
@@ -3820,6 +4142,13 @@
               "messages_sent": 13.9375,
               "blocked_moves": 74.79166666666667,
               "duplicate_commitments": 44.895833333333336
+            },
+            "iqms": {
+              "team_return": 207.5,
+              "completed_orders": 10.375,
+              "messages_sent": 10.25,
+              "blocked_moves": 74.16666666666667,
+              "duplicate_commitments": 40.583333333333336
             },
             "episodes": [
               {
@@ -4216,6 +4545,13 @@
               "blocked_moves": 76.05208333333333,
               "duplicate_commitments": 39.395833333333336
             },
+            "iqms": {
+              "team_return": 207.70833333333334,
+              "completed_orders": 10.385416666666666,
+              "messages_sent": 11.947916666666666,
+              "blocked_moves": 75.68229166666667,
+              "duplicate_commitments": 32.104166666666664
+            },
             "episodes": [
               {
                 "seed": 2000,
@@ -4603,20 +4939,153 @@
               }
             ]
           },
-          "mean_adjusted_return": {
-            "silent": 204.58333333333334,
-            "always_send": 104.58333333333334,
-            "conflict_rule": 193.390625,
-            "random_matched": 192.75520833333334,
-            "learned": 200.265625,
-            "random_matched_to_learned": 202.10091145833334
+          "adjusted_return": {
+            "silent": {
+              "iqm": 205.83333333333334,
+              "iqm_95_percent_interval": [
+                200.0,
+                210.83333333333334
+              ],
+              "mean": 204.58333333333334
+            },
+            "always_send": {
+              "iqm": 108.33333333333333,
+              "iqm_95_percent_interval": [
+                98.33333333333333,
+                114.16666666666667
+              ],
+              "mean": 104.58333333333333
+            },
+            "conflict_rule": {
+              "iqm": 197.44791666666666,
+              "iqm_95_percent_interval": [
+                186.28125,
+                205.03125
+              ],
+              "mean": 193.390625
+            },
+            "random_matched": {
+              "iqm": 194.13932291666666,
+              "iqm_95_percent_interval": [
+                190.421875,
+                197.77604166666666
+              ],
+              "mean": 192.75520833333334
+            },
+            "learned": {
+              "iqm": 204.70833333333334,
+              "iqm_95_percent_interval": [
+                194.41666666666666,
+                211.58333333333334
+              ],
+              "mean": 200.265625
+            },
+            "random_matched_to_learned": {
+              "iqm": 204.72395833333334,
+              "iqm_95_percent_interval": [
+                201.36197916666666,
+                207.91536458333334
+              ],
+              "mean": 202.10091145833334
+            }
           },
-          "learned_vs_random_adjusted_return": {
-            "mean_difference": -1.8352864583333333,
-            "bootstrap_95_percent_interval": [
-              -6.2734375,
-              2.5729166666666665
-            ]
+          "comparisons": {
+            "learned_vs_silent": {
+              "iqm_difference": -1.125,
+              "iqm_difference_95_percent_interval": [
+                -10.677083333333343,
+                5.447916666666657
+              ],
+              "mean_difference": -4.317708333333333,
+              "mean_difference_95_percent_interval": [
+                -9.526041666666666,
+                0.7239583333333334
+              ]
+            },
+            "learned_vs_always_send": {
+              "iqm_difference": 96.37500000000001,
+              "iqm_difference_95_percent_interval": [
+                89.57291666666666,
+                103.38541666666667
+              ],
+              "mean_difference": 95.68229166666667,
+              "mean_difference_95_percent_interval": [
+                91.58854166666667,
+                99.98958333333333
+              ]
+            },
+            "learned_vs_conflict_rule": {
+              "iqm_difference": 7.260416666666686,
+              "iqm_difference_95_percent_interval": [
+                -0.09375,
+                15.385416666666657
+              ],
+              "mean_difference": 6.875,
+              "mean_difference_95_percent_interval": [
+                2.5520833333333335,
+                11.677083333333334
+              ]
+            },
+            "learned_vs_random_matched_to_learned": {
+              "iqm_difference": -0.015625,
+              "iqm_difference_95_percent_interval": [
+                -8.96484375,
+                6.010416666666657
+              ],
+              "mean_difference": -1.8352864583333333,
+              "mean_difference_95_percent_interval": [
+                -6.2734375,
+                2.5729166666666665
+              ]
+            },
+            "conflict_rule_vs_silent": {
+              "iqm_difference": -8.385416666666686,
+              "iqm_difference_95_percent_interval": [
+                -19.552083333333343,
+                0.020833333333342807
+              ],
+              "mean_difference": -11.192708333333334,
+              "mean_difference_95_percent_interval": [
+                -17.161458333333332,
+                -5.34375
+              ]
+            },
+            "conflict_rule_vs_always_send": {
+              "iqm_difference": 89.11458333333333,
+              "iqm_difference_95_percent_interval": [
+                87.09375,
+                91.39583333333334
+              ],
+              "mean_difference": 88.80729166666667,
+              "mean_difference_95_percent_interval": [
+                87.46875,
+                90.13020833333333
+              ]
+            },
+            "conflict_rule_vs_random_matched": {
+              "iqm_difference": 3.30859375,
+              "iqm_difference_95_percent_interval": [
+                -7.227864583333343,
+                10.73046875
+              ],
+              "mean_difference": 0.6354166666666666,
+              "mean_difference_95_percent_interval": [
+                -4.867838541666667,
+                6.082682291666667
+              ]
+            },
+            "always_send_vs_silent": {
+              "iqm_difference": -97.50000000000001,
+              "iqm_difference_95_percent_interval": [
+                -106.66666666666667,
+                -90.83333333333333
+              ],
+              "mean_difference": -100.0,
+              "mean_difference_95_percent_interval": [
+                -105.0,
+                -95.0
+              ]
+            }
           }
         },
         {
@@ -4631,6 +5100,13 @@
               "messages_sent": 11.354166666666666,
               "blocked_moves": 75.60416666666667,
               "duplicate_commitments": 45.5
+            },
+            "iqms": {
+              "team_return": 207.5,
+              "completed_orders": 10.375,
+              "messages_sent": 8.166666666666666,
+              "blocked_moves": 75.125,
+              "duplicate_commitments": 40.541666666666664
             },
             "episodes": [
               {
@@ -5027,6 +5503,13 @@
               "blocked_moves": 76.51822916666667,
               "duplicate_commitments": 40.098958333333336
             },
+            "iqms": {
+              "team_return": 207.29166666666666,
+              "completed_orders": 10.364583333333334,
+              "messages_sent": 10.1875,
+              "blocked_moves": 76.01041666666667,
+              "duplicate_commitments": 32.71875
+            },
             "episodes": [
               {
                 "seed": 2000,
@@ -5414,20 +5897,153 @@
               }
             ]
           },
-          "mean_adjusted_return": {
-            "silent": 204.58333333333334,
-            "always_send": 4.583333333333343,
-            "conflict_rule": 182.19791666666669,
-            "random_matched": 180.92708333333334,
-            "learned": 198.48958333333331,
-            "random_matched_to_learned": 199.67578125
+          "adjusted_return": {
+            "silent": {
+              "iqm": 205.83333333333334,
+              "iqm_95_percent_interval": [
+                200.0,
+                210.83333333333334
+              ],
+              "mean": 204.58333333333334
+            },
+            "always_send": {
+              "iqm": 8.333333333333334,
+              "iqm_95_percent_interval": [
+                -1.6666666666666667,
+                14.166666666666666
+              ],
+              "mean": 4.583333333333333
+            },
+            "conflict_rule": {
+              "iqm": 186.5625,
+              "iqm_95_percent_interval": [
+                173.52083333333334,
+                196.02083333333334
+              ],
+              "mean": 182.19791666666666
+            },
+            "random_matched": {
+              "iqm": 182.23697916666666,
+              "iqm_95_percent_interval": [
+                178.54947916666666,
+                185.87239583333334
+              ],
+              "mean": 180.92708333333334
+            },
+            "learned": {
+              "iqm": 202.875,
+              "iqm_95_percent_interval": [
+                192.72916666666666,
+                210.08333333333334
+              ],
+              "mean": 198.48958333333334
+            },
+            "random_matched_to_learned": {
+              "iqm": 202.21875,
+              "iqm_95_percent_interval": [
+                198.29947916666666,
+                205.73958333333334
+              ],
+              "mean": 199.67578125
+            }
           },
-          "learned_vs_random_adjusted_return": {
-            "mean_difference": -1.1861979166666667,
-            "bootstrap_95_percent_interval": [
-              -5.934895833333333,
-              3.5403645833333335
-            ]
+          "comparisons": {
+            "learned_vs_silent": {
+              "iqm_difference": -2.958333333333343,
+              "iqm_difference_95_percent_interval": [
+                -12.645833333333314,
+                3.916666666666657
+              ],
+              "mean_difference": -6.09375,
+              "mean_difference_95_percent_interval": [
+                -11.614583333333334,
+                -0.6666666666666666
+              ]
+            },
+            "learned_vs_always_send": {
+              "iqm_difference": 194.54166666666666,
+              "iqm_difference_95_percent_interval": [
+                188.0,
+                201.77083333333334
+              ],
+              "mean_difference": 193.90625,
+              "mean_difference_95_percent_interval": [
+                189.65625,
+                198.72916666666666
+              ]
+            },
+            "learned_vs_conflict_rule": {
+              "iqm_difference": 16.3125,
+              "iqm_difference_95_percent_interval": [
+                8.083333333333343,
+                25.708333333333343
+              ],
+              "mean_difference": 16.291666666666668,
+              "mean_difference_95_percent_interval": [
+                11.395833333333334,
+                22.072916666666668
+              ]
+            },
+            "learned_vs_random_matched_to_learned": {
+              "iqm_difference": 0.65625,
+              "iqm_difference_95_percent_interval": [
+                -8.596354166666657,
+                7.3828125
+              ],
+              "mean_difference": -1.1861979166666667,
+              "mean_difference_95_percent_interval": [
+                -5.934895833333333,
+                3.5403645833333335
+              ]
+            },
+            "conflict_rule_vs_silent": {
+              "iqm_difference": -19.270833333333343,
+              "iqm_difference_95_percent_interval": [
+                -32.1875,
+                -8.958333333333343
+              ],
+              "mean_difference": -22.385416666666668,
+              "mean_difference_95_percent_interval": [
+                -29.34375,
+                -15.552083333333334
+              ]
+            },
+            "conflict_rule_vs_always_send": {
+              "iqm_difference": 178.22916666666666,
+              "iqm_difference_95_percent_interval": [
+                174.1875,
+                182.79166666666669
+              ],
+              "mean_difference": 177.61458333333334,
+              "mean_difference_95_percent_interval": [
+                174.9375,
+                180.26041666666666
+              ]
+            },
+            "conflict_rule_vs_random_matched": {
+              "iqm_difference": 4.325520833333343,
+              "iqm_difference_95_percent_interval": [
+                -7.721354166666686,
+                13.677083333333343
+              ],
+              "mean_difference": 1.2708333333333333,
+              "mean_difference_95_percent_interval": [
+                -5.315104166666667,
+                7.671875
+              ]
+            },
+            "always_send_vs_silent": {
+              "iqm_difference": -197.5,
+              "iqm_difference_95_percent_interval": [
+                -206.66666666666669,
+                -190.83333333333331
+              ],
+              "mean_difference": -200.0,
+              "mean_difference_95_percent_interval": [
+                -205.0,
+                -195.0
+              ]
+            }
           }
         }
       ]
@@ -5443,6 +6059,13 @@
             "messages_sent": 0,
             "blocked_moves": 189,
             "duplicate_commitments": 23.6875
+          },
+          "iqms": {
+            "team_return": 140,
+            "completed_orders": 7,
+            "messages_sent": 0,
+            "blocked_moves": 184.45833333333334,
+            "duplicate_commitments": 23.541666666666668
           },
           "episodes": [
             {
@@ -5839,6 +6462,13 @@
             "blocked_moves": 196.14583333333334,
             "duplicate_commitments": 11.708333333333334
           },
+          "iqms": {
+            "team_return": 151.66666666666666,
+            "completed_orders": 7.583333333333333,
+            "messages_sent": 400,
+            "blocked_moves": 192.54166666666666,
+            "duplicate_commitments": 11.291666666666666
+          },
           "episodes": [
             {
               "seed": 2000,
@@ -6234,6 +6864,13 @@
             "blocked_moves": 196.14583333333334,
             "duplicate_commitments": 11.708333333333334
           },
+          "iqms": {
+            "team_return": 151.66666666666666,
+            "completed_orders": 7.583333333333333,
+            "messages_sent": 29.583333333333332,
+            "blocked_moves": 192.54166666666666,
+            "duplicate_commitments": 11.291666666666666
+          },
           "episodes": [
             {
               "seed": 2000,
@@ -6628,6 +7265,13 @@
             "messages_sent": 27.15625,
             "blocked_moves": 190.76302083333334,
             "duplicate_commitments": 22.791666666666668
+          },
+          "iqms": {
+            "team_return": 140.41666666666666,
+            "completed_orders": 7.020833333333333,
+            "messages_sent": 27.276041666666668,
+            "blocked_moves": 186.71354166666666,
+            "duplicate_commitments": 22.890625
           },
           "episodes": [
             {
@@ -7031,6 +7675,13 @@
               "blocked_moves": 192.41666666666666,
               "duplicate_commitments": 20.645833333333332
             },
+            "iqms": {
+              "team_return": 148.33333333333334,
+              "completed_orders": 7.416666666666667,
+              "messages_sent": 6.083333333333333,
+              "blocked_moves": 191.04166666666666,
+              "duplicate_commitments": 20.541666666666668
+            },
             "episodes": [
               {
                 "seed": 2000,
@@ -7426,6 +8077,13 @@
               "blocked_moves": 194.55989583333334,
               "duplicate_commitments": 20.838541666666668
             },
+            "iqms": {
+              "team_return": 143.64583333333334,
+              "completed_orders": 7.182291666666667,
+              "messages_sent": 7.432291666666667,
+              "blocked_moves": 191.3125,
+              "duplicate_commitments": 20.510416666666668
+            },
             "episodes": [
               {
                 "seed": 2000,
@@ -7813,20 +8471,153 @@
               }
             ]
           },
-          "mean_adjusted_return": {
-            "silent": 139.58333333333334,
-            "always_send": 150.83333333333334,
-            "conflict_rule": 150.83333333333334,
-            "random_matched": 140.36458333333334,
-            "learned": 146.25,
-            "random_matched_to_learned": 143.48958333333334
+          "adjusted_return": {
+            "silent": {
+              "iqm": 140.0,
+              "iqm_95_percent_interval": [
+                135.83333333333334,
+                143.33333333333334
+              ],
+              "mean": 139.58333333333334
+            },
+            "always_send": {
+              "iqm": 151.66666666666666,
+              "iqm_95_percent_interval": [
+                145.83333333333334,
+                157.5
+              ],
+              "mean": 150.83333333333334
+            },
+            "conflict_rule": {
+              "iqm": 151.66666666666666,
+              "iqm_95_percent_interval": [
+                145.83333333333334,
+                157.5
+              ],
+              "mean": 150.83333333333334
+            },
+            "random_matched": {
+              "iqm": 140.41666666666666,
+              "iqm_95_percent_interval": [
+                137.5,
+                144.47916666666666
+              ],
+              "mean": 140.36458333333334
+            },
+            "learned": {
+              "iqm": 148.33333333333334,
+              "iqm_95_percent_interval": [
+                142.5,
+                154.16666666666666
+              ],
+              "mean": 146.25
+            },
+            "random_matched_to_learned": {
+              "iqm": 143.64583333333334,
+              "iqm_95_percent_interval": [
+                139.47916666666666,
+                148.02083333333334
+              ],
+              "mean": 143.48958333333334
+            }
           },
-          "learned_vs_random_adjusted_return": {
-            "mean_difference": 2.7604166666666665,
-            "bootstrap_95_percent_interval": [
-              -2.4479166666666665,
-              7.864583333333333
-            ]
+          "comparisons": {
+            "learned_vs_silent": {
+              "iqm_difference": 8.333333333333343,
+              "iqm_difference_95_percent_interval": [
+                2.5,
+                15.0
+              ],
+              "mean_difference": 6.666666666666667,
+              "mean_difference_95_percent_interval": [
+                -0.4166666666666667,
+                14.166666666666666
+              ]
+            },
+            "learned_vs_always_send": {
+              "iqm_difference": -3.3333333333333144,
+              "iqm_difference_95_percent_interval": [
+                -10.833333333333343,
+                4.166666666666657
+              ],
+              "mean_difference": -4.583333333333333,
+              "mean_difference_95_percent_interval": [
+                -12.083333333333334,
+                2.5
+              ]
+            },
+            "learned_vs_conflict_rule": {
+              "iqm_difference": -3.3333333333333144,
+              "iqm_difference_95_percent_interval": [
+                -10.833333333333343,
+                4.166666666666657
+              ],
+              "mean_difference": -4.583333333333333,
+              "mean_difference_95_percent_interval": [
+                -12.083333333333334,
+                2.5
+              ]
+            },
+            "learned_vs_random_matched_to_learned": {
+              "iqm_difference": 4.6875,
+              "iqm_difference_95_percent_interval": [
+                -1.25,
+                10.0
+              ],
+              "mean_difference": 2.7604166666666665,
+              "mean_difference_95_percent_interval": [
+                -2.4479166666666665,
+                7.864583333333333
+              ]
+            },
+            "conflict_rule_vs_silent": {
+              "iqm_difference": 11.666666666666657,
+              "iqm_difference_95_percent_interval": [
+                5.0,
+                18.333333333333343
+              ],
+              "mean_difference": 11.25,
+              "mean_difference_95_percent_interval": [
+                3.75,
+                18.75
+              ]
+            },
+            "conflict_rule_vs_always_send": {
+              "iqm_difference": 0.0,
+              "iqm_difference_95_percent_interval": [
+                0.0,
+                0.0
+              ],
+              "mean_difference": 0.0,
+              "mean_difference_95_percent_interval": [
+                0.0,
+                0.0
+              ]
+            },
+            "conflict_rule_vs_random_matched": {
+              "iqm_difference": 11.25,
+              "iqm_difference_95_percent_interval": [
+                3.9583333333333144,
+                17.291666666666686
+              ],
+              "mean_difference": 10.46875,
+              "mean_difference_95_percent_interval": [
+                3.28125,
+                17.604166666666668
+              ]
+            },
+            "always_send_vs_silent": {
+              "iqm_difference": 11.666666666666657,
+              "iqm_difference_95_percent_interval": [
+                5.0,
+                18.333333333333343
+              ],
+              "mean_difference": 11.25,
+              "mean_difference_95_percent_interval": [
+                3.75,
+                18.75
+              ]
+            }
           }
         },
         {
@@ -7841,6 +8632,13 @@
               "messages_sent": 6.041666666666667,
               "blocked_moves": 192.4375,
               "duplicate_commitments": 20.6875
+            },
+            "iqms": {
+              "team_return": 148.33333333333334,
+              "completed_orders": 7.416666666666667,
+              "messages_sent": 5.916666666666667,
+              "blocked_moves": 191.08333333333334,
+              "duplicate_commitments": 20.541666666666668
             },
             "episodes": [
               {
@@ -8237,6 +9035,13 @@
               "blocked_moves": 193.86458333333334,
               "duplicate_commitments": 21.005208333333332
             },
+            "iqms": {
+              "team_return": 143.33333333333334,
+              "completed_orders": 7.166666666666667,
+              "messages_sent": 6.973958333333333,
+              "blocked_moves": 190.4375,
+              "duplicate_commitments": 20.666666666666668
+            },
             "episodes": [
               {
                 "seed": 2000,
@@ -8624,20 +9429,153 @@
               }
             ]
           },
-          "mean_adjusted_return": {
-            "silent": 139.58333333333334,
-            "always_send": 110.83333333333334,
-            "conflict_rule": 147.91041666666666,
-            "random_matched": 137.64895833333335,
-            "learned": 145.64583333333334,
-            "random_matched_to_learned": 142.74036458333333
+          "adjusted_return": {
+            "silent": {
+              "iqm": 140.0,
+              "iqm_95_percent_interval": [
+                135.83333333333334,
+                143.33333333333334
+              ],
+              "mean": 139.58333333333334
+            },
+            "always_send": {
+              "iqm": 111.66666666666667,
+              "iqm_95_percent_interval": [
+                105.83333333333333,
+                117.5
+              ],
+              "mean": 110.83333333333333
+            },
+            "conflict_rule": {
+              "iqm": 148.575,
+              "iqm_95_percent_interval": [
+                142.70833333333334,
+                154.1125
+              ],
+              "mean": 147.91041666666666
+            },
+            "random_matched": {
+              "iqm": 137.70208333333332,
+              "iqm_95_percent_interval": [
+                134.76666666666665,
+                141.72760416666665
+              ],
+              "mean": 137.64895833333333
+            },
+            "learned": {
+              "iqm": 147.65833333333333,
+              "iqm_95_percent_interval": [
+                141.725,
+                153.48333333333335
+              ],
+              "mean": 145.64583333333334
+            },
+            "random_matched_to_learned": {
+              "iqm": 142.63802083333334,
+              "iqm_95_percent_interval": [
+                138.57083333333333,
+                147.24895833333332
+              ],
+              "mean": 142.74036458333333
+            }
           },
-          "learned_vs_random_adjusted_return": {
-            "mean_difference": 2.9054687500000003,
-            "bootstrap_95_percent_interval": [
-              -2.3640625,
-              8.068489583333333
-            ]
+          "comparisons": {
+            "learned_vs_silent": {
+              "iqm_difference": 7.658333333333331,
+              "iqm_difference_95_percent_interval": [
+                1.7916666666666572,
+                14.337500000000006
+              ],
+              "mean_difference": 6.062499999999999,
+              "mean_difference_95_percent_interval": [
+                -0.972916666666667,
+                13.499999999999998
+              ]
+            },
+            "learned_vs_always_send": {
+              "iqm_difference": 35.99166666666666,
+              "iqm_difference_95_percent_interval": [
+                28.454166666666666,
+                43.57083333333334
+              ],
+              "mean_difference": 34.8125,
+              "mean_difference_95_percent_interval": [
+                27.285416666666666,
+                41.93958333333333
+              ]
+            },
+            "learned_vs_conflict_rule": {
+              "iqm_difference": -0.9166666666666572,
+              "iqm_difference_95_percent_interval": [
+                -8.479166666666686,
+                6.583333333333343
+              ],
+              "mean_difference": -2.2645833333333325,
+              "mean_difference_95_percent_interval": [
+                -9.808333333333334,
+                4.929166666666667
+              ]
+            },
+            "learned_vs_random_matched_to_learned": {
+              "iqm_difference": 5.020312499999989,
+              "iqm_difference_95_percent_interval": [
+                -0.932812499999983,
+                10.467708333333348
+              ],
+              "mean_difference": 2.905468750000002,
+              "mean_difference_95_percent_interval": [
+                -2.364062499999997,
+                8.068489583333335
+              ]
+            },
+            "conflict_rule_vs_silent": {
+              "iqm_difference": 8.574999999999989,
+              "iqm_difference_95_percent_interval": [
+                2.2208333333333314,
+                15.0625
+              ],
+              "mean_difference": 8.327083333333333,
+              "mean_difference_95_percent_interval": [
+                0.8291666666666657,
+                15.735416666666666
+              ]
+            },
+            "conflict_rule_vs_always_send": {
+              "iqm_difference": 36.90833333333332,
+              "iqm_difference_95_percent_interval": [
+                36.562500000000014,
+                37.27083333333334
+              ],
+              "mean_difference": 37.077083333333334,
+              "mean_difference_95_percent_interval": [
+                36.856249999999996,
+                37.30208333333333
+              ]
+            },
+            "conflict_rule_vs_random_matched": {
+              "iqm_difference": 10.872916666666669,
+              "iqm_difference_95_percent_interval": [
+                3.580729166666657,
+                16.766145833333354
+              ],
+              "mean_difference": 10.261458333333332,
+              "mean_difference_95_percent_interval": [
+                3.119010416666666,
+                17.31015625
+              ]
+            },
+            "always_send_vs_silent": {
+              "iqm_difference": -28.33333333333333,
+              "iqm_difference_95_percent_interval": [
+                -35.0,
+                -21.66666666666667
+              ],
+              "mean_difference": -28.75,
+              "mean_difference_95_percent_interval": [
+                -36.25,
+                -21.25
+              ]
+            }
           }
         },
         {
@@ -8652,6 +9590,13 @@
               "messages_sent": 5.479166666666667,
               "blocked_moves": 190.85416666666666,
               "duplicate_commitments": 20.520833333333332
+            },
+            "iqms": {
+              "team_return": 149.16666666666666,
+              "completed_orders": 7.458333333333333,
+              "messages_sent": 5.333333333333333,
+              "blocked_moves": 188,
+              "duplicate_commitments": 20.791666666666668
             },
             "episodes": [
               {
@@ -9048,6 +9993,13 @@
               "blocked_moves": 193.74479166666666,
               "duplicate_commitments": 21.174479166666668
             },
+            "iqms": {
+              "team_return": 141.5625,
+              "completed_orders": 7.078125,
+              "messages_sent": 6.265625,
+              "blocked_moves": 190.546875,
+              "duplicate_commitments": 21.052083333333332
+            },
             "episodes": [
               {
                 "seed": 2000,
@@ -9435,20 +10387,153 @@
               }
             ]
           },
-          "mean_adjusted_return": {
-            "silent": 139.58333333333334,
-            "always_send": 50.83333333333334,
-            "conflict_rule": 143.52604166666669,
-            "random_matched": 133.57552083333334,
-            "learned": 146.546875,
-            "random_matched_to_learned": 141.03059895833331
+          "adjusted_return": {
+            "silent": {
+              "iqm": 140.0,
+              "iqm_95_percent_interval": [
+                135.83333333333334,
+                143.33333333333334
+              ],
+              "mean": 139.58333333333334
+            },
+            "always_send": {
+              "iqm": 51.666666666666664,
+              "iqm_95_percent_interval": [
+                45.833333333333336,
+                57.5
+              ],
+              "mean": 50.833333333333336
+            },
+            "conflict_rule": {
+              "iqm": 143.9375,
+              "iqm_95_percent_interval": [
+                138.42708333333334,
+                149.09375
+              ],
+              "mean": 143.52604166666666
+            },
+            "random_matched": {
+              "iqm": 133.63020833333334,
+              "iqm_95_percent_interval": [
+                130.70572916666666,
+                137.62369791666666
+              ],
+              "mean": 133.57552083333334
+            },
+            "learned": {
+              "iqm": 147.70833333333334,
+              "iqm_95_percent_interval": [
+                141.8125,
+                153.48958333333334
+              ],
+              "mean": 146.546875
+            },
+            "random_matched_to_learned": {
+              "iqm": 140.04036458333334,
+              "iqm_95_percent_interval": [
+                136.58463541666666,
+                144.390625
+              ],
+              "mean": 141.03059895833334
+            }
           },
-          "learned_vs_random_adjusted_return": {
-            "mean_difference": 5.516276041666667,
-            "bootstrap_95_percent_interval": [
-              0.03515625,
-              10.897786458333334
-            ]
+          "comparisons": {
+            "learned_vs_silent": {
+              "iqm_difference": 7.708333333333343,
+              "iqm_difference_95_percent_interval": [
+                1.7916666666666856,
+                14.385416666666657
+              ],
+              "mean_difference": 6.963541666666667,
+              "mean_difference_95_percent_interval": [
+                0.057291666666666664,
+                14.135416666666666
+              ]
+            },
+            "learned_vs_always_send": {
+              "iqm_difference": 96.04166666666669,
+              "iqm_difference_95_percent_interval": [
+                88.29166666666669,
+                103.89583333333331
+              ],
+              "mean_difference": 95.71354166666667,
+              "mean_difference_95_percent_interval": [
+                87.91666666666667,
+                103.19791666666667
+              ]
+            },
+            "learned_vs_conflict_rule": {
+              "iqm_difference": 3.770833333333343,
+              "iqm_difference_95_percent_interval": [
+                -3.8333333333333144,
+                11.458333333333314
+              ],
+              "mean_difference": 3.0208333333333335,
+              "mean_difference_95_percent_interval": [
+                -4.432291666666667,
+                10.458333333333334
+              ]
+            },
+            "learned_vs_random_matched_to_learned": {
+              "iqm_difference": 7.66796875,
+              "iqm_difference_95_percent_interval": [
+                1.63671875,
+                13.213541666666686
+              ],
+              "mean_difference": 5.516276041666667,
+              "mean_difference_95_percent_interval": [
+                0.03515625,
+                10.897786458333334
+              ]
+            },
+            "conflict_rule_vs_silent": {
+              "iqm_difference": 3.9375,
+              "iqm_difference_95_percent_interval": [
+                -2.020833333333343,
+                10.15625
+              ],
+              "mean_difference": 3.9427083333333335,
+              "mean_difference_95_percent_interval": [
+                -3.4895833333333335,
+                11.229166666666666
+              ]
+            },
+            "conflict_rule_vs_always_send": {
+              "iqm_difference": 92.27083333333334,
+              "iqm_difference_95_percent_interval": [
+                91.40625,
+                93.17708333333334
+              ],
+              "mean_difference": 92.69270833333333,
+              "mean_difference_95_percent_interval": [
+                92.140625,
+                93.25520833333333
+              ]
+            },
+            "conflict_rule_vs_random_matched": {
+              "iqm_difference": 10.307291666666657,
+              "iqm_difference_95_percent_interval": [
+                3.282552083333343,
+                15.993489583333343
+              ],
+              "mean_difference": 9.950520833333334,
+              "mean_difference_95_percent_interval": [
+                2.9114583333333335,
+                16.909505208333332
+              ]
+            },
+            "always_send_vs_silent": {
+              "iqm_difference": -88.33333333333334,
+              "iqm_difference_95_percent_interval": [
+                -95.0,
+                -81.66666666666666
+              ],
+              "mean_difference": -88.75,
+              "mean_difference_95_percent_interval": [
+                -96.25,
+                -81.25
+              ]
+            }
           }
         },
         {
@@ -9463,6 +10548,13 @@
               "messages_sent": 4.625,
               "blocked_moves": 193.4375,
               "duplicate_commitments": 20.875
+            },
+            "iqms": {
+              "team_return": 150,
+              "completed_orders": 7.5,
+              "messages_sent": 4.541666666666667,
+              "blocked_moves": 188.625,
+              "duplicate_commitments": 20.958333333333332
             },
             "episodes": [
               {
@@ -9859,6 +10951,13 @@
               "blocked_moves": 193.265625,
               "duplicate_commitments": 21.541666666666668
             },
+            "iqms": {
+              "team_return": 141.5625,
+              "completed_orders": 7.078125,
+              "messages_sent": 5.817708333333333,
+              "blocked_moves": 190.61458333333334,
+              "duplicate_commitments": 21.34375
+            },
             "episodes": [
               {
                 "seed": 2000,
@@ -10246,20 +11345,153 @@
               }
             ]
           },
-          "mean_adjusted_return": {
-            "silent": 139.58333333333334,
-            "always_send": -49.16666666666666,
-            "conflict_rule": 136.21875,
-            "random_matched": 126.78645833333334,
-            "learned": 147.6875,
-            "random_matched_to_learned": 139.11328125
+          "adjusted_return": {
+            "silent": {
+              "iqm": 140.0,
+              "iqm_95_percent_interval": [
+                135.83333333333334,
+                143.33333333333334
+              ],
+              "mean": 139.58333333333334
+            },
+            "always_send": {
+              "iqm": -48.333333333333336,
+              "iqm_95_percent_interval": [
+                -54.166666666666664,
+                -42.5
+              ],
+              "mean": -49.166666666666664
+            },
+            "conflict_rule": {
+              "iqm": 136.20833333333334,
+              "iqm_95_percent_interval": [
+                131.10416666666666,
+                140.875
+              ],
+              "mean": 136.21875
+            },
+            "random_matched": {
+              "iqm": 126.84375,
+              "iqm_95_percent_interval": [
+                123.91145833333333,
+                130.82552083333334
+              ],
+              "mean": 126.78645833333333
+            },
+            "learned": {
+              "iqm": 147.60416666666666,
+              "iqm_95_percent_interval": [
+                142.04166666666666,
+                153.39583333333334
+              ],
+              "mean": 147.6875
+            },
+            "random_matched_to_learned": {
+              "iqm": 138.65364583333334,
+              "iqm_95_percent_interval": [
+                135.36979166666666,
+                142.8203125
+              ],
+              "mean": 139.11328125
+            }
           },
-          "learned_vs_random_adjusted_return": {
-            "mean_difference": 8.57421875,
-            "bootstrap_95_percent_interval": [
-              2.5377604166666665,
-              14.236979166666666
-            ]
+          "comparisons": {
+            "learned_vs_silent": {
+              "iqm_difference": 7.604166666666657,
+              "iqm_difference_95_percent_interval": [
+                2.0625,
+                14.0
+              ],
+              "mean_difference": 8.104166666666666,
+              "mean_difference_95_percent_interval": [
+                1.1145833333333333,
+                15.177083333333334
+              ]
+            },
+            "learned_vs_always_send": {
+              "iqm_difference": 195.9375,
+              "iqm_difference_95_percent_interval": [
+                187.89583333333331,
+                203.97916666666666
+              ],
+              "mean_difference": 196.85416666666666,
+              "mean_difference_95_percent_interval": [
+                188.8125,
+                204.11458333333334
+              ]
+            },
+            "learned_vs_conflict_rule": {
+              "iqm_difference": 11.395833333333314,
+              "iqm_difference_95_percent_interval": [
+                3.8333333333333144,
+                18.770833333333314
+              ],
+              "mean_difference": 11.46875,
+              "mean_difference_95_percent_interval": [
+                3.6979166666666665,
+                18.65625
+              ]
+            },
+            "learned_vs_random_matched_to_learned": {
+              "iqm_difference": 8.950520833333314,
+              "iqm_difference_95_percent_interval": [
+                3.2890625,
+                14.333333333333343
+              ],
+              "mean_difference": 8.57421875,
+              "mean_difference_95_percent_interval": [
+                2.5377604166666665,
+                14.236979166666666
+              ]
+            },
+            "conflict_rule_vs_silent": {
+              "iqm_difference": -3.791666666666657,
+              "iqm_difference_95_percent_interval": [
+                -9.604166666666657,
+                2.020833333333343
+              ],
+              "mean_difference": -3.3645833333333335,
+              "mean_difference_95_percent_interval": [
+                -10.854166666666666,
+                3.8229166666666665
+              ]
+            },
+            "conflict_rule_vs_always_send": {
+              "iqm_difference": 184.54166666666669,
+              "iqm_difference_95_percent_interval": [
+                182.8125,
+                186.35416666666666
+              ],
+              "mean_difference": 185.38541666666666,
+              "mean_difference_95_percent_interval": [
+                184.28125,
+                186.51041666666666
+              ]
+            },
+            "conflict_rule_vs_random_matched": {
+              "iqm_difference": 9.364583333333343,
+              "iqm_difference_95_percent_interval": [
+                2.6848958333333286,
+                14.716145833333329
+              ],
+              "mean_difference": 9.432291666666666,
+              "mean_difference_95_percent_interval": [
+                2.5078125,
+                16.204427083333332
+              ]
+            },
+            "always_send_vs_silent": {
+              "iqm_difference": -188.33333333333334,
+              "iqm_difference_95_percent_interval": [
+                -195.0,
+                -181.66666666666666
+              ],
+              "mean_difference": -188.75,
+              "mean_difference_95_percent_interval": [
+                -196.25,
+                -181.25
+              ]
+            }
           }
         }
       ]
