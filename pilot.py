@@ -219,8 +219,15 @@ def conflict_rule(controller, state, sender, intent):
     return competition_distances(controller, state, sender, intent) is not None
 
 
-def run_episode(controller, seed, send_policy: SendPolicy, *, capture_trace: bool = False):
-    """Run an episode and optionally record the first action changed by a message."""
+def run_episode(
+    controller,
+    seed,
+    send_policy: SendPolicy,
+    *,
+    capture_trace: bool = False,
+    observe_reward: Callable[[int], None] | None = None,
+):
+    """Run an episode with optional reward observation and first-message tracing."""
     rng = Random(seed)
     directions = tuple(
         tuple(rng.sample(list(Direction.ALL_DIRECTIONS), 4)) for _ in range(2)
@@ -306,7 +313,10 @@ def run_episode(controller, seed, send_policy: SendPolicy, *, capture_trace: boo
                     old_positions, attempted, next_state.players
                 )
             )
-        metrics.team_return += sum(info["sparse_reward_by_agent"])
+        reward = sum(info["sparse_reward_by_agent"])
+        metrics.team_return += reward
+        if observe_reward is not None:
+            observe_reward(reward)
         metrics.completed_orders += sum(info["event_infos"]["soup_delivery"])
         state = next_state
     return metrics, trace

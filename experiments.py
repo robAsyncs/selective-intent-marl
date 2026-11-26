@@ -3,6 +3,7 @@
 import argparse
 import json
 from dataclasses import asdict
+from functools import cache
 from math import isfinite
 from pathlib import Path
 from random import Random
@@ -12,11 +13,13 @@ from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
 
 from learned import (
     DEFAULT_COSTS,
-    PRIOR_WEIGHT,
+    EXPLORATION_RATES,
     PROBES_PER_EPISODE,
-    ROLLOUT_RATES,
+    TIME_BIN_WIDTH,
     TRAINING_SEEDS,
-    fit_send_values,
+    collect_send_probes,
+    fit_send_policy,
+    send_features,
 )
 from pilot import (
     HORIZON,
@@ -31,18 +34,28 @@ from pilot import (
 
 CALIBRATION_SEEDS = range(100, 124)
 RANDOM_REPEATS = 8
+CALIBRATION_STEPS = 8
 HELD_OUT_SEEDS = range(2000, 2048)
 
 
-def random_policy(rate, seed, repeat):
+def random_policy(rate, seed, repeat, *, eligible_only=False):
     # Draw independently of the simulator RNG so each condition shares setup
     # and collision recovery draws with its paired scenarios.
     rng = Random(f"random-send:{seed}:{repeat}")
 
     def send(controller, state, sender, intent):
-        return rng.random() < rate
+        return rng.random() < rate and (
+            not eligible_only or send_features(controller, state, sender, intent) is not None
+        )
 
     return send
+
+
+def eligible_random_policy(rate):
+    def make_policy(seed, repeat):
+        return random_policy(rate, seed, repeat, eligible_only=True)
+
+    return make_policy
 
 
 def evaluate(controller, seeds, make_policy, repeats=1):
@@ -112,6 +125,28 @@ def adjusted_return(condition, cost):
     return means["team_return"] - cost * means["messages_sent"]
 
 
+def match_message_budget(messages_at_rate, target):
+    """Find a per-opportunity rate close to the target calibration volume."""
+    if target == 0:
+        return 0.0, 0.0
+    lower, upper = 0.0, 1.0
+    full_count = messages_at_rate(upper)
+    if full_count == target:
+        return upper, full_count
+    candidates = [(lower, 0.0), (upper, full_count)]
+    for _ in range(CALIBRATION_STEPS):
+        rate = (lower + upper) / 2
+        message_count = messages_at_rate(rate)
+        candidates.append((rate, message_count))
+        if message_count == target:
+            break
+        if message_count < target:
+            lower = rate
+        else:
+            upper = rate
+    return min(candidates, key=lambda candidate: abs(candidate[1] - target))
+
+
 def run_heuristic():
     results = {
         "horizon": HORIZON,
@@ -143,25 +178,37 @@ def run_learned(costs=DEFAULT_COSTS):
         "calibration_seeds": list(CALIBRATION_SEEDS),
         "evaluation_seeds": list(HELD_OUT_SEEDS),
         "probes_per_training_episode": PROBES_PER_EPISODE,
-        "training_rollout_rates": ROLLOUT_RATES,
-        "prior_weight": PRIOR_WEIGHT,
+        "training_exploration_rates": EXPLORATION_RATES,
+        "training_time_bin_width": TIME_BIN_WIDTH,
         "random_repeats_per_seed": RANDOM_REPEATS,
+        "random_matched_to_learned_eligibility": "same_as_learned",
         "layouts": {},
     }
     for layout in LAYOUTS:
         controller = Controller(OvercookedGridworld.from_layout_name(layout))
-        values = fit_send_values(controller)
+        probes = collect_send_probes(controller)
         baseline_rate, baselines = evaluate_baselines(controller, HELD_OUT_SEEDS)
+
+        @cache
+        def messages_at_rate(rate):
+            return evaluate(
+                controller,
+                CALIBRATION_SEEDS,
+                eligible_random_policy(rate),
+                repeats=RANDOM_REPEATS,
+            )["means"]["messages_sent"]
+
         sweep = []
         for cost in costs:
-            policy = values.policy(cost)
+            policy = fit_send_policy(probes, cost)
             calibration = evaluate(controller, CALIBRATION_SEEDS, lambda *_: policy)
-            rate = calibration["means"]["messages_sent"] / HORIZON
+            target_messages = calibration["means"]["messages_sent"]
+            rate, matched_messages = match_message_budget(messages_at_rate, target_messages)
             learned = evaluate(controller, HELD_OUT_SEEDS, lambda *_: policy)
             random_matched = evaluate(
                 controller,
                 HELD_OUT_SEEDS,
-                lambda seed, repeat: random_policy(rate, seed, repeat),
+                eligible_random_policy(rate),
                 repeats=RANDOM_REPEATS,
             )
             conditions = {
@@ -173,6 +220,8 @@ def run_learned(costs=DEFAULT_COSTS):
                 {
                     "message_cost": cost,
                     "calibrated_random_rate": rate,
+                    "calibration_learned_messages": target_messages,
+                    "calibration_random_messages": matched_messages,
                     "learned": learned,
                     "random_matched_to_learned": random_matched,
                     "mean_adjusted_return": {
@@ -185,7 +234,7 @@ def run_learned(costs=DEFAULT_COSTS):
                 }
             )
         results["layouts"][layout] = {
-            "training_probes": sum(totals.samples for totals in values.by_task.values()),
+            "training_probes": sum(len(samples) for samples in probes.values()),
             "conflict_rule_random_rate": baseline_rate,
             "baselines": baselines,
             "cost_sweep": sweep,

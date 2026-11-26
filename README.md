@@ -73,38 +73,97 @@ per-seed metrics and the calibration rates.
 
 The learned policy uses the same send decision as the other policies. At a
 potential conflict, its inputs are the sender's task, its distance to the
-target, and how many steps sooner it can get there than the teammate.
+target, how many steps sooner it can get there than the teammate, and the
+number of ticks left in the episode. The gate stays silent on the final tick,
+when an eligible message cannot change team reward.
 
-During training, we replay a sampled decision with both choices, send and
-stay silent, and measure the difference in team reward and message count
-through the end of the episode. The paired rollouts share the simulator seed
-and subsequent random draws. The model averages these differences for
-similar decisions and sends when the estimated gain in team reward minus
-the cost of extra messages is positive. The same rollout data is used to fit
-decisions at each cost.
+### Q update
 
-We trained separately on each layout using 512 seeds (1000–1511), with two
-decisions sampled per seed. We evaluated all costs and baselines on the same
-48 held-out seeds (2000–2047) per layout. Random sender rates were calibrated
-on seeds 100–123.
+The policy is fit with undiscounted, finite-horizon Q-learning over the send
+gate's decisions ([`learned.py`](learned.py)). A decision is one eligible
+conflict, described by features `x = (task, sender steps, lead)`, where
+sender steps is capped at 4 and lead at 3. The time left in the episode is
+`t = HORIZON − tick`. The two actions are `a ∈ {silent, send}`.
+
+**Paired transitions.** Each training episode runs with random sending at an
+exploration rate of 0, 0.5 or 1 per eligible conflict, cycling across seeds.
+At up to four sampled conflicts, we rerun the episode with the opposite
+choice at that tick only. Both runs use the same simulator seed and the same
+gate random stream, so they stay identical before the decision. For each
+branch we record:
+
+- `r_k`: team reward `k` ticks after the decision, up to the next eligible
+  conflict or the end of the episode.
+- `Δ`: ticks until that next conflict.
+- `x′`: the features at that conflict, or none if the episode ended first.
+
+**Target.** For a branch observed from a decision with `t` ticks left:
+
+```
+y(t) = Σ_{k < min(Δ, t)} r_k  +  max_a′ Q(t − Δ, x′, a′)
+```
+
+The bootstrap term is zero when there is no `x′` or when `t − Δ ≤ 1`,
+because the gate stays silent on the final tick. An unseen `(t, x′)` also
+counts as zero. The max makes the update off-policy. Only rewards up to the
+next conflict come from the exploration policy. Later rewards come from the
+greedy fitted values.
+
+**Update.** With `c` as the cost per message, and averaging over the
+transitions `P(t, x)` pooled for that state:
+
+```
+Q(t, x, silent) = mean_{p ∈ P(t, x)} y_silent(t)
+Q(t, x, send)   = mean_{p ∈ P(t, x)} y_send(t)  −  c
+```
+
+The cost is charged once, on the send branch, for the current message. No
+message can be sent between eligible conflicts. Later messages pay their cost
+through the bootstrapped `Q(·, send)` values.
+
+**Fitting order and pooling.** `t` runs from 2 up to `HORIZON`. Every
+bootstrap reads a strictly smaller `t − Δ`, so the targets are already
+final when they are used. This makes one backward-induction sweep, not
+an iterative fit. Data is sparse at each exact tick, so `P(t, x)` pools all
+transitions with the same features whose recorded time left falls in the
+same 25-tick band as `t`. Each one is then re-targeted with the exact `t`.
+Rewards past `t` are dropped, and the bootstrap is read at `t − Δ`. A
+transition recorded with fewer than `t` ticks left is used only if both
+branches reached a next conflict. Otherwise the episode end would have cut
+off rewards that a longer horizon would have counted.
+
+**Acting.** The gate sends when `Q(t, x, send) > Q(t, x, silent)`. It stays
+silent on ties, on unseen states, on ineligible ticks and on the final tick.
+The same paired transitions are refit for each message cost, which gives one
+policy per cost.
+
+We trained separately on each layout using 512 seeds (1000–1511), with up
+to four paired decisions sampled per seed. We evaluated all costs and
+baselines on the same 48 held-out seeds (2000–2047) per layout. The random
+baseline for the learned gate uses the same eligible conflict opportunities.
+We calibrated its per-opportunity probability on seeds 100–123 to approximate
+the learned gate's mean message count at each cost.
 
 | Layout | Cost per message | Reward | Messages | Adjusted reward |
 | --- | ---: | ---: | ---: | ---: |
-| Cramped Room | 0.00 | 202.92 | 32.02 | 202.92 |
-| Cramped Room | 0.10 | 202.50 | 16.67 | 200.83 |
-| Cramped Room | 0.25 | 201.67 | 5.10 | 200.39 |
-| Cramped Room | 0.50 | 202.92 | 4.77 | 200.53 |
-| Coordination Ring | 0.00 | 146.67 | 10.38 | 146.67 |
-| Coordination Ring | 0.10 | 146.67 | 9.15 | 145.75 |
-| Coordination Ring | 0.25 | 146.67 | 7.67 | 144.75 |
-| Coordination Ring | 0.50 | 147.92 | 5.81 | 145.01 |
+| Cramped Room | 0.00 | 204.58 | 17.88 | 204.58 |
+| Cramped Room | 0.10 | 204.17 | 16.06 | 202.56 |
+| Cramped Room | 0.25 | 203.75 | 13.94 | 200.27 |
+| Cramped Room | 0.50 | 204.17 | 11.35 | 198.49 |
+| Coordination Ring | 0.00 | 146.25 | 6.29 | 146.25 |
+| Coordination Ring | 0.10 | 146.25 | 6.04 | 145.65 |
+| Coordination Ring | 0.25 | 147.92 | 5.48 | 146.55 |
+| Coordination Ring | 0.50 | 150.00 | 4.63 | 147.69 |
 
-At a cost of 0.50 on Coordination Ring, the learned policy kept 98.1% of
-always-send reward and sent 5.81 messages per episode. It beat its
-rate-matched random baseline by 7.96 adjusted reward points (paired 95%
-interval from +0.77 to +14.57). The other three intervals on Coordination
-Ring include zero. On Cramped Room, silence scored higher than learned
-sending on mean adjusted reward at every tested cost. See
+At a cost of 0.50 on Coordination Ring, the learned policy kept 99.4% of
+always-send reward. It earned 8.57 more adjusted reward points than the
+random baseline with the same eligibility rules (paired 95% interval from
++2.54 to +14.24). Both policies averaged 5.54 messages on the calibration
+seeds. On the held-out seeds, the learned policy averaged 4.63 messages and
+the random baseline averaged 5.84. At a cost of 0.25, the paired gain was 5.52
+(+0.04 to +10.90). The two lower-cost intervals include zero. On Cramped Room,
+silence tied the learned policy at zero cost and scored higher at all three
+positive costs. See
 [learned-results.json](learned-results.json) for all baseline comparisons and
 per-seed metrics.
 
@@ -116,6 +175,7 @@ pinned in [`requirements.txt`](requirements.txt).
 ```sh
 uv venv --python 3.12
 uv pip install -r requirements.txt
+.venv/bin/python -m unittest
 .venv/bin/python pilot.py --output /tmp/overcooked-pilot.json
 cmp pilot-results.json /tmp/overcooked-pilot.json
 .venv/bin/python experiments.py heuristic --output /tmp/overcooked-heuristic.json
